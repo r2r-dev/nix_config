@@ -3,13 +3,7 @@
 
   inputs = {
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-24.11";
-    };
-    nixpkgs-alt = {
-      url = "github:NixOS/nixpkgs/nixos-24.11";
-    };
-    nixpkgs-xr = {
-      url = "github:nix-community/nixpkgs-xr";
+      url = "github:NixOS/nixpkgs/nixos-unstable";
     };
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -26,7 +20,7 @@
       url = "github:nix-community/impermanence";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nur = {
