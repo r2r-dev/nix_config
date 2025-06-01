@@ -112,6 +112,7 @@
               ;
           };
           modules = [
+            { nixpkgs.overlays = [ myOverlays ]; }
             agenix.nixosModules.default
             chaotic.nixosModules.default
             {

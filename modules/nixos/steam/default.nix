@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  unstable,
   ...
 }:
 
@@ -15,10 +14,10 @@
       mangohud
       moonlight-qt
       steamtinkerlaunch
-      unstable.gamescope
-      unstable.gamescope-wsi
-      unstable.lutris
-      unstable.nexusmods-app-unfree
+      gamescope
+      gamescope-wsi
+      lutris
+      nexusmods-app-unfree
       vulkan-tools
     ];
   };
@@ -59,7 +58,6 @@
     steam = {
       enable = true;
       protontricks.enable = true;
-      # package = unstable.steam;
       extraPackages =
         with pkgs;
         [
