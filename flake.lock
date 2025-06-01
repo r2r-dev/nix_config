@@ -568,15 +568,14 @@
         "nixpkgs-xr": "nixpkgs-xr"
       },
       "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-/XLTiyNEtdFNRuvU6nufn66oegKI+GuslVDHU3iHdbg=",
         "path": "./pkgs",
         "type": "path"
       },
       "original": {
         "path": "./pkgs",
         "type": "path"
-      }
+      },
+      "parent": []
     },
     "root": {
       "inputs": {

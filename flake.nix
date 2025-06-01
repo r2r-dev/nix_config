@@ -85,21 +85,21 @@
           };
           modules = [
             nixos-hardware.nixosModules.gpd-pocket-4
-            #agenix.nixosModules.default
+            agenix.nixosModules.default
             chaotic.nixosModules.default
-            #{
-            #  environment.systemPackages = [ agenix.packages.x86_64-linux.default ];
-            #  imports = [ home-manager.nixosModules.home-manager ];
+            {
+              environment.systemPackages = [ agenix.packages.x86_64-linux.default ];
+              imports = [ home-manager.nixosModules.home-manager ];
 
-            #  home-manager.users.r2r =
-            #    { ... }:
-            #    {
-            #      imports = [
+              home-manager.users.r2r =
+                { ... }:
+                {
+                  imports = [
             #        #impermanence.homeManagerModules.impermanence
             #        outputs.homeManagerModules.impermanence
-            #      ];
-            #    };
-            #}
+                  ];
+                };
+            }
             #impermanence.nixosModules.impermanence
             ./machines/annata
           ];

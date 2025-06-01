@@ -13,6 +13,15 @@ in
     ./hardware-configuration.nix
     ./audio.nix
   ];
+  age = {
+    identityPaths = [
+      "/etc/ssh/ssh_host_ed25519_key"
+      "/etc/ssh/ssh_host_rsa_key"
+    ];
+    secrets = {
+      "r2r.passwd".file = ../../secrets/r2r.passwd.age;
+    };
+  };
 
   hardware.gpd.pocket4.audioEnhancement.enable = true;
   # Enable fprintd
@@ -72,7 +81,7 @@ in
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   hardware.ledger.enable = true;
 
   services.zerotierone.enable = true;
@@ -107,26 +116,55 @@ in
     wireplumber.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.r2r = {
-    isNormalUser = true;
-    description = "r2r";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-    ];
-    packages = with pkgs; [
-      sshfs
-      keepassxc
-      appimage-run
-      webcord
-      stremio
-      kdePackages.kate
-    ];
+  users = {
+    mutableUsers = false;
+    users = {
+      r2r = {
+        isNormalUser = true;
+        hashedPasswordFile = config.age.secrets."r2r.passwd".path;
+        extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+      };
+    };
   };
+
+  home-manager.users.r2r =
+    { pkgs, ... }:
+    {
+      nixpkgs = {
+        config = {
+          allowUnfree = true;
+          allowUnfreePredicate = _: true;
+        };
+      };
+      nix = {
+        extraOptions = ''
+          experimental-features = nix-command flakes
+        '';
+      };
+      home.packages = with pkgs; [
+        python3
+        discord
+        stremio
+        git
+        keepassxc
+        nixfmt-rfc-style
+        protonvpn-cli
+        protonvpn-gui
+        signal-desktop
+        sshx # TODO ssh module
+        sshfs # TODO ssh module
+      ];
+      programs = {
+        bash.enable = true;
+        firefox.enable = true;
+        vim.enable = true;
+      };
+
+      # The state version is required and should stay at the version you
+      # originally installed.
+      home.stateVersion = "24.11";
+    };
 
   # Enable Bluetooth
   hardware.bluetooth = {
@@ -177,24 +215,7 @@ in
     maliit-framework
   ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
