@@ -1,5 +1,9 @@
-_:
-
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   # Enable Bluetooth
   hardware.bluetooth = {
@@ -7,10 +11,11 @@ _:
     powerOnBoot = true;
   };
   services.blueman.enable = true;
-  # TODO: if impermanent
-  environment.persistence."/persist" = {
-    directories = [
-      "/var/lib/bluetooth"
-    ];
-  };
-}
+} // lib.mkIf config.r2r.impermanence.enable (
+  {
+    environment.persistence."/persist" = {
+      directories = [
+        "/var/lib/bluetooth"
+      ];
+    };
+  })

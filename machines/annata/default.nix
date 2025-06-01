@@ -9,6 +9,9 @@ let
 in
 {
   imports = with outputs.nixosModules; [
+    impermanence
+    bluetooth
+    xbox
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./audio.nix
@@ -22,6 +25,7 @@ in
       "r2r.passwd".file = ../../secrets/r2r.passwd.age;
     };
   };
+  r2r.impermanence.enable = false;
 
   hardware.gpd.pocket4.audioEnhancement.enable = true;
   # Enable fprintd
@@ -165,33 +169,6 @@ in
       # originally installed.
       home.stateVersion = "24.11";
     };
-
-  # Enable Bluetooth
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-    settings.General = {
-      experimental = true; # show battery
-
-      # https://www.reddit.com/r/NixOS/comments/1ch5d2p/comment/lkbabax/
-      # for pairing bluetooth controller
-      Privacy = "device";
-      JustWorksRepairing = "always";
-      Class = "0x000100";
-      FastConnectable = true;
-    };
-  };
-  services.blueman.enable = true;
-
-  hardware.xpadneo.enable = true; # Enable the xpadneo driver for Xbox One wireless controllers
-
-  boot = {
-    extraModulePackages = with config.boot.kernelPackages; [ xpadneo ];
-    extraModprobeConfig = ''
-      options bluetooth disable_ertm=Y
-    '';
-    # connect xbox controller
-  };
 
   # Install firefox.
   programs.firefox.enable = true;

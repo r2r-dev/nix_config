@@ -95,12 +95,12 @@
                 { ... }:
                 {
                   imports = [
-            #        #impermanence.homeManagerModules.impermanence
+                     impermanence.homeManagerModules.impermanence
             #        outputs.homeManagerModules.impermanence
                   ];
                 };
             }
-            #impermanence.nixosModules.impermanence
+            impermanence.nixosModules.impermanence
             ./machines/annata
           ];
         };
