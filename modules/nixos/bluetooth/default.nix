@@ -11,11 +11,9 @@
     powerOnBoot = true;
   };
   services.blueman.enable = true;
-} // lib.mkIf config.r2r.impermanence.enable (
-  {
-    environment.persistence."/persist" = {
-      directories = [
-        "/var/lib/bluetooth"
-      ];
-    };
-  })
+  environment.persistence."/persist" = lib.mkIf (config.r2r.impermanence.enable) {
+    directories = [
+      "/var/lib/bluetooth"
+    ];
+  };
+}
