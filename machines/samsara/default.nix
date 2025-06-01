@@ -28,18 +28,18 @@
   ];
   r2r.impermanence.enable = true;
 
-      nixpkgs.overlays = [
-        (final: prev: {
-          # Upgrade linux-firmware, the ath12k firmware is broken on the latest official version.
-          linux-firmware = prev.linux-firmware.overrideAttrs rec {
-            version = "f4e75db20a11ed07b86017f76c7b428e1fa3f40d";
-            src = final.fetchzip {
-              url = "https://gitlab.com/kernel-firmware/linux-firmware/-/archive/f4e75db20a11ed07b86017f76c7b428e1fa3f40d/linux-firmware-f4e75db20a11ed07b86017f76c7b428e1fa3f40d.zip";
-              hash = "sha256-WmCw9xRUP8HT3yY5EEJVSbUEVAKCJ2wk3KNoApsPzMU=";
-            };
-          };
-        })
-      ];
+  nixpkgs.overlays = [
+    (final: prev: {
+      # Upgrade linux-firmware, the ath12k firmware is broken on the latest official version.
+      linux-firmware = prev.linux-firmware.overrideAttrs rec {
+        version = "f4e75db20a11ed07b86017f76c7b428e1fa3f40d";
+        src = final.fetchzip {
+          url = "https://gitlab.com/kernel-firmware/linux-firmware/-/archive/f4e75db20a11ed07b86017f76c7b428e1fa3f40d/linux-firmware-f4e75db20a11ed07b86017f76c7b428e1fa3f40d.zip";
+          hash = "sha256-WmCw9xRUP8HT3yY5EEJVSbUEVAKCJ2wk3KNoApsPzMU=";
+        };
+      };
+    })
+  ];
   age = {
     identityPaths = [
       "/persist/etc/ssh/ssh_host_ed25519_key"

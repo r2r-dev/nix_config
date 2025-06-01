@@ -56,6 +56,7 @@
       chaotic,
       nixpkgs,
       nixpkgs-unstable,
+      nixos-hardware,
       home-manager,
       impermanence,
       outoftree,
@@ -63,20 +64,46 @@
     }@inputs:
     let
       inherit (self) outputs;
-      overlay = final: prev: {
-        linux-firmware = prev.linux-firmware.overrideAttrs rec {
-            version = "";
-            src = prev.fetchzip {
-              url = "";
-              hash = "";
-            };
-        };
-      };
     in
     {
       nixosModules = import ./modules/nixos;
       homeManagerModules = import ./modules/home;
       nixosConfigurations = {
+        annata = nixpkgs.lib.nixosSystem rec {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit
+              inputs
+              system
+              outoftree
+              outputs
+              ;
+            unstable = import nixpkgs-unstable {
+              inherit inputs system;
+              config.allowUnfree = true;
+            };
+          };
+          modules = [
+            nixos-hardware.nixosModules.gpd-pocket-4
+            #agenix.nixosModules.default
+            chaotic.nixosModules.default
+            #{
+            #  environment.systemPackages = [ agenix.packages.x86_64-linux.default ];
+            #  imports = [ home-manager.nixosModules.home-manager ];
+
+            #  home-manager.users.r2r =
+            #    { ... }:
+            #    {
+            #      imports = [
+            #        #impermanence.homeManagerModules.impermanence
+            #        outputs.homeManagerModules.impermanence
+            #      ];
+            #    };
+            #}
+            #impermanence.nixosModules.impermanence
+            ./machines/annata
+          ];
+        };
         samsara = nixpkgs.lib.nixosSystem rec {
           system = "x86_64-linux";
           specialArgs = {
@@ -85,7 +112,6 @@
               system
               outoftree
               outputs
-              overlay
               ;
             unstable = import nixpkgs-unstable {
               inherit inputs system;
