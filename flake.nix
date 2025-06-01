@@ -2,6 +2,9 @@
   description = "My NixOS flake";
 
   inputs = {
+    chaotic = {
+      url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    };
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
@@ -50,6 +53,7 @@
     {
       self,
       agenix,
+      chaotic,
       nixpkgs,
       nixpkgs-unstable,
       home-manager,
@@ -90,6 +94,7 @@
           };
           modules = [
             agenix.nixosModules.default
+            chaotic.nixosModules.default
             {
               environment.systemPackages = [ agenix.packages.x86_64-linux.default ];
               imports = [ home-manager.nixosModules.home-manager ];
