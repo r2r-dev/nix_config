@@ -7,4 +7,5 @@ _:
     desktopManager.plasma6.enable = true;
     xserver.xkb.layout = "pl";
   };
+  console.keyMap = "pl2";
 }

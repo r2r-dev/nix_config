@@ -8,9 +8,6 @@
     nixpkgs = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
-    nixpkgs-unstable = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
-    };
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -55,7 +52,6 @@
       agenix,
       chaotic,
       nixpkgs,
-      nixpkgs-unstable,
       nixos-hardware,
       home-manager,
       impermanence,
@@ -64,6 +60,10 @@
     }@inputs:
     let
       inherit (self) outputs;
+      myOverlays = import ./overlays {
+        inherit outoftree;
+        system = "x86_64-linux";
+      };
     in
     {
       nixosModules = import ./modules/nixos;
@@ -78,12 +78,9 @@
               outoftree
               outputs
               ;
-            unstable = import nixpkgs-unstable {
-              inherit inputs system;
-              config.allowUnfree = true;
-            };
           };
           modules = [
+            { nixpkgs.overlays = [ myOverlays ]; }
             nixos-hardware.nixosModules.gpd-pocket-4
             agenix.nixosModules.default
             chaotic.nixosModules.default
@@ -95,8 +92,8 @@
                 { ... }:
                 {
                   imports = [
-                     impermanence.homeManagerModules.impermanence
-            #        outputs.homeManagerModules.impermanence
+                    impermanence.homeManagerModules.impermanence
+                    #        outputs.homeManagerModules.impermanence
                   ];
                 };
             }
@@ -113,10 +110,6 @@
               outoftree
               outputs
               ;
-            unstable = import nixpkgs-unstable {
-              inherit inputs system;
-              config.allowUnfree = true;
-            };
           };
           modules = [
             agenix.nixosModules.default

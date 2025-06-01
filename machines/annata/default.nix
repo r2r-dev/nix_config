@@ -11,7 +11,13 @@ in
   imports = with outputs.nixosModules; [
     impermanence
     bluetooth
+    boot
+    desktop
+    nix
+    cloud
+    #kernel
     xbox
+    zerotier
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./audio.nix
@@ -26,6 +32,7 @@ in
     };
   };
   r2r.impermanence.enable = false;
+  boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linux_zen_git;
 
   hardware.gpd.pocket4.audioEnhancement.enable = true;
   # Enable fprintd
@@ -35,9 +42,6 @@ in
       libfprint = libfprint-focaltech;
     };
   };
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "annata"; # Define your hostname.
 
@@ -68,38 +72,12 @@ in
   # You can disable this if you're only using the Wayland session.
   services.xserver.enable = true;
 
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "pl";
-    variant = "";
-  };
-
-  # Configure console keymap
-  console.keyMap = "pl2";
-
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   hardware.ledger.enable = true;
-
-  services.zerotierone.enable = true;
-  services.zerotierone.joinNetworks = [
-    "363c67c55a95648e" # szamszur cloud
-  ];
-  services.dnsmasq = {
-    enable = true;
-    #resolveLocalQueries = true;
-    settings.server = [
-      "/szamszur.cloud/192.168.10.5"
-      "/puqu.io/192.168.25.5"
-    ];
-  };
 
   # Enable interface to sensors like Accelerometers and Light sensors
   hardware.sensor.iio.enable = true;
@@ -119,7 +97,6 @@ in
     socketActivation = true;
     wireplumber.enable = true;
   };
-
 
   users = {
     mutableUsers = false;

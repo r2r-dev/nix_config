@@ -30,7 +30,6 @@
     openFirewall = true;
   };
 
-
   services.ananicy = {
     # https://github.com/NixOS/nixpkgs/issues/351516
     enable = true;

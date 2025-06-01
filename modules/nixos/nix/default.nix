@@ -1,11 +1,11 @@
 {
   config,
+  lib,
   ...
 }:
 
 {
-  # TODO: if impermanent
-  environment.persistence."/persist" = {
+  environment.persistence."/persist" = lib.mkIf (config.r2r.impermanence.enable) {
     hideMounts = true;
     directories = [
       "/etc/nixos"
