@@ -332,8 +332,10 @@ in
 
       # Pipewire is needed for this.
       services.pipewire.enable = lib.mkDefault true;
-      environment.etc."gpd-audio/gpd-pocket-4-mp-48k-l.wav".source = ./gpd-pocket-4-mp-48k-l.wav;
-      environment.etc."gpd-audio/gpd-pocket-4-mp-48k-r.wav".source = ./gpd-pocket-4-mp-48k-r.wav;
+      environment.etc."gpd-audio/gpd-pocket-4-mp-48k-l.wav".source =
+        ./gpd-pocket-4-mp-48k-l.wav;
+      environment.etc."gpd-audio/gpd-pocket-4-mp-48k-r.wav".source =
+        ./gpd-pocket-4-mp-48k-r.wav;
     }
   );
 }

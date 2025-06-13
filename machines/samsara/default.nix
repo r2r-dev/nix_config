@@ -56,7 +56,6 @@
     #ifuse # optional, to mount using 'ifuse'
   ];
 
-
   # Enable OpenGL
   hardware.graphics = {
     enable32Bit = true;
