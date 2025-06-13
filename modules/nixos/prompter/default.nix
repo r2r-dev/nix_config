@@ -16,12 +16,12 @@
       kpkgs.extend (
         _: __: {
           evdi = kpkgs.evdi.overrideDerivation (_: rec {
-            version = "1.14.9";
+            version = "1.14.10";
             src = pkgs.fetchFromGitHub {
               owner = "DisplayLink";
               repo = "evdi";
               tag = "v${version}";
-              hash = "sha256-tkDsVa2A8DQkMAYerx7CEtPUQYG7RomNc/UsN9tZpqo=";
+              hash = "sha256-xB3AHg9t/X8vw5p7ohFQ+WuMjb1P8DAP3pROiwWkVPs=";
             };
           });
         }
