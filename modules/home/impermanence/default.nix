@@ -30,6 +30,8 @@
       ".mozilla" # Firefox config/local state.
     ];
     files = [
+      ".config/coderv2/session"
+      ".config/coderv2/url"
       ".config/OpenRGB/OpenRGB.json"
       ".config/monitors.xml"
       "fs-diff.sh"

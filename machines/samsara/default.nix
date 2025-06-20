@@ -88,6 +88,7 @@
         '';
       };
       home.packages = with pkgs; [
+        coder
         python3
         discord
         stremio
