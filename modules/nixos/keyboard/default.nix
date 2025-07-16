@@ -7,7 +7,8 @@
 with lib;
 let
   cfg = config.hardware.keyd;
-in {
+in
+{
   options.hardware.keyd = with types; {
     enable = mkEnableOption "Enable keyd";
   };
@@ -17,10 +18,10 @@ in {
       enable = true;
       keyboards.default = {
         ids = [ "*" ];
-	settings.main = {
+        settings.main = {
           #capslock = "overload(control, esc)";
           #esc = "capslock";
-	  #shift = "oneshot(shift)";
+          #shift = "oneshot(shift)";
           #leftalt = "oneshot(altgr)";
           #rightalt = "oneshot(altgr)";
         };
