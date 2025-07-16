@@ -1,5 +1,6 @@
 {
   bluetooth = import ./bluetooth;
+  keyboard = import ./keyboard;
   boot = import ./boot;
   cloud = import ./cloud;
   desktop = import ./desktop;

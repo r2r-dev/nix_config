@@ -10,18 +10,21 @@ in
 {
   imports = with outputs.nixosModules; [
     impermanence
+    prompter
     bluetooth
     boot
     desktop
     nix
     cloud
     #kernel
+    keyboard
     xbox
     zerotier
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./audio.nix
   ];
+  programs.kdeconnect.enable = true;
   age = {
     identityPaths = [
       "/etc/ssh/ssh_host_ed25519_key"
@@ -31,6 +34,7 @@ in
       "r2r.passwd".file = ../../secrets/r2r.passwd.age;
     };
   };
+  hardware.keyd.enable = true;
   r2r.impermanence.enable = false;
   boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linux_zen_git;
 
