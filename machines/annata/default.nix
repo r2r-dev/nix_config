@@ -16,7 +16,7 @@ in
     desktop
     nix
     cloud
-    #kernel
+    kernel
     keyboard
     xbox
     zerotier
@@ -36,7 +36,6 @@ in
   };
   hardware.keyd.enable = true;
   r2r.impermanence.enable = false;
-  boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linux_zen_git;
 
   hardware.gpd.pocket4.audioEnhancement.enable = true;
   # Enable fprintd
