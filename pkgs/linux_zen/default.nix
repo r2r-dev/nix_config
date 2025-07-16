@@ -1,7 +1,5 @@
 {
-  linux_zen,
   linux_testing,
-  fetchFromGitHub,
   ...
 }:
 

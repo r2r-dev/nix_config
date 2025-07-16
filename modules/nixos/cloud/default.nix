@@ -1,11 +1,10 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 {
-  environment.persistence."/persist" = lib.mkIf (config.r2r.impermanence.enable) {
+  environment.persistence."/persist" = lib.mkIf config.r2r.impermanence.enable {
     files = [
       "/var/lib/zerotier-one/networks.d/363c67c55a95648e.conf" # szamszur cloud
     ];

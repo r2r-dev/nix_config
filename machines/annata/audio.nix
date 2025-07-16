@@ -64,13 +64,6 @@ in
 
       # These are pre-made decibel to linear value conversions, since Nix doesn't have pow().
       # Use the formula `10 ** (db / 20)` to calculate.
-      db = {
-        "-18.1" = 0.1244514611771385;
-        "-5.48" = 0.5321082592667942;
-        "-4.76" = 0.5780960474057181;
-        "8.1" = 2.5409727055493048;
-        "-36" = 1.5848931924611134e-2;
-      };
 
       json = pkgs.formats.json { };
 

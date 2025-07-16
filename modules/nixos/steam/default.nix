@@ -22,24 +22,26 @@
     ];
   };
 
-  services.sunshine = {
-    enable = true;
-    autoStart = false;
-    capSysAdmin = true;
-    openFirewall = true;
-  };
+  services = {
+    sunshine = {
+      enable = true;
+      autoStart = false;
+      capSysAdmin = true;
+      openFirewall = true;
+    };
 
-  services.ananicy = {
-    # https://github.com/NixOS/nixpkgs/issues/351516
-    enable = true;
-    package = pkgs.ananicy-cpp;
-    rulesProvider = pkgs.ananicy-cpp;
-    extraRules = [
-      {
-        "name" = "gamescope";
-        "nice" = -20;
-      }
-    ];
+    ananicy = {
+      # https://github.com/NixOS/nixpkgs/issues/351516
+      enable = true;
+      package = pkgs.ananicy-cpp;
+      rulesProvider = pkgs.ananicy-cpp;
+      extraRules = [
+        {
+          "name" = "gamescope";
+          "nice" = -20;
+        }
+      ];
+    };
   };
 
   programs = {

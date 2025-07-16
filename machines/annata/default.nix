@@ -24,7 +24,6 @@ in
     ./hardware-configuration.nix
     ./audio.nix
   ];
-  programs.kdeconnect.enable = true;
   age = {
     identityPaths = [
       "/etc/ssh/ssh_host_ed25519_key"
@@ -34,21 +33,52 @@ in
       "r2r.passwd".file = ../../secrets/r2r.passwd.age;
     };
   };
-  hardware.keyd.enable = true;
   r2r.impermanence.enable = false;
 
-  hardware.gpd.pocket4.audioEnhancement.enable = true;
-  # Enable fprintd
-  services.fprintd = {
-    enable = true;
-    package = pkgs.fprintd.override {
-      libfprint = libfprint-focaltech;
+  hardware = {
+    keyd.enable = true;
+    ledger.enable = true;
+    gpd.pocket4.audioEnhancement.enable = true;
+    # Enable interface to sensors like Accelerometers and Light sensors
+    sensor.iio.enable = true;
+  };
+  services = {
+    udev.extraHwdb = ''
+      # GPD Pocket 4
+      sensor:modalias:*
+        ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, 1, 0; 1, 0, 0
+    '';
+    # Enable fprintd
+    fprintd = {
+      enable = true;
+      package = pkgs.fprintd.override {
+        libfprint = libfprint-focaltech;
+      };
+    };
+    # Enable CUPS to print documents.
+    printing.enable = true;
+
+    # Enable sound with pipewire.
+    pulseaudio.enable = false;
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      jack.enable = true;
+      pulse.enable = true;
+      socketActivation = true;
+      wireplumber.enable = true;
     };
   };
 
   networking.hostName = "annata"; # Define your hostname.
 
-  programs.coolercontrol.enable = true;
+  programs = {
+    kdeconnect.enable = true;
+    coolercontrol.enable = true;
+    firefox.enable = true;
+    steam.enable = true;
+  };
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -71,35 +101,7 @@ in
     LC_TIME = "pl_PL.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = true;
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
-  hardware.ledger.enable = true;
-
-  # Enable interface to sensors like Accelerometers and Light sensors
-  hardware.sensor.iio.enable = true;
-  services.udev.extraHwdb = ''
-    # GPD Pocket 4
-    sensor:modalias:*
-      ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, 1, 0; 1, 0, 0
-  '';
-
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    jack.enable = true;
-    pulse.enable = true;
-    socketActivation = true;
-    wireplumber.enable = true;
-  };
 
   users = {
     mutableUsers = false;
@@ -149,10 +151,6 @@ in
       # originally installed.
       home.stateVersion = "24.11";
     };
-
-  # Install firefox.
-  programs.firefox.enable = true;
-  programs.steam.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
