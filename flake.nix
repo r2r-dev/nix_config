@@ -43,6 +43,7 @@
     outoftree = {
       url = "path:./pkgs";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.chaotic.follows = "chaotic";
     };
   };
 
@@ -56,6 +57,7 @@
       home-manager,
       impermanence,
       outoftree,
+      nur,
       ...
     }@inputs:
     let
@@ -113,6 +115,7 @@
           };
           modules = [
             { nixpkgs.overlays = [ myOverlays ]; }
+            nur.modules.nixos.default
             agenix.nixosModules.default
             chaotic.nixosModules.default
             {

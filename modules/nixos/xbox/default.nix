@@ -14,12 +14,6 @@
   ];
   hardware.xpadneo.enable = true; # Enable the xpadneo driver for Xbox One wireless controllers
   boot = {
-    extraModulePackages = with config.boot.kernelPackages; [
-      xpadneo # xbox
-    ];
-    extraModprobeConfig = ''
-      options bluetooth disable_ertm=Y
-    ''; # connect xbox controller
     kernelModules = [
       "hid_microsoft" # Xbox One Elite 2 controller driver preferred by Steam
     ];

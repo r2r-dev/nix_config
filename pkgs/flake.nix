@@ -2,11 +2,15 @@
   description = "Out Of Tree";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    chaotic = {
+      url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    };
   };
 
   outputs =
     {
       nixpkgs,
+      chaotic,
       ...
     }:
     let
@@ -17,13 +21,15 @@
         system:
         let
           pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
+            system = "x86_64-linux";
+            config = {
+              allowUnfree = true;
+            };
+            overlays = [ chaotic.overlays.cache-friendly ]; # IMPORTANT
           };
         in
         rec {
-          linux_zen = pkgs.callPackage ./linux_zen { };
-          it87 = pkgs.callPackage ./it87 { kernel = linux_zen; };
+          it87 = pkgs.callPackage ./it87 { kernel = pkgs.linux_cachyos; };
         }
       );
     };

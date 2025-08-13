@@ -28,6 +28,32 @@
     ./hardware-configuration.nix
   ];
   r2r.impermanence.enable = true;
+  programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
+  programs.steam.gamescopeSession.args = [
+    "-W 3840"
+    "-H 2160"
+    "-w 3840"
+    "-h 2160"
+    "--fullscreen"
+    "--steam"
+    "-r 120"
+    "--xwayland-count 2"
+    "--adaptive-sync"
+    "--hdr-enabled"
+    "--hdr-itm-enabled"
+    "--mangoapp"
+  ];
+
+  programs.steam.gamescopeSession.steamArgs = [
+    "-pipewire-dmabuf"
+    "-gamepadui"
+    "-steamos3"
+  ];
+
+  services.getty.autologinUser = "r2r";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "r2r";
+  services.displayManager.defaultSession = pkgs.lib.mkForce "steam";
 
   age = {
     identityPaths = [
@@ -52,6 +78,7 @@
   };
 
   environment.systemPackages = with pkgs; [
+    nur.repos.xddxdd.uncategorized.vk-hdr-layer
     libimobiledevice
     #ifuse # optional, to mount using 'ifuse'
   ];
@@ -68,7 +95,10 @@
       r2r = {
         isNormalUser = true;
         hashedPasswordFile = config.age.secrets."r2r.passwd".path;
-        extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+        extraGroups = [
+          "wheel"
+          "input"
+        ]; # Enable ‘sudo’ for the user.
       };
     };
   };

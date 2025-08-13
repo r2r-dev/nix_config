@@ -37,7 +37,7 @@
   boot = {
     kernelPackages =
       let
-        kpkgs = pkgs.linuxPackagesFor config.kernel.package; # outoftree.pkgs.${pkgs.system}.linux_zen;
+        kpkgs = pkgs.linuxPackagesFor config.kernel.package;
       in
       kpkgs.extend (
         _: __: {

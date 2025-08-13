@@ -47,7 +47,7 @@
   programs = {
     gamescope = {
       enable = true;
-      capSysNice = false;
+      capSysNice = true;
     };
     gamemode = {
       enable = true;
@@ -63,6 +63,10 @@
       extraPackages =
         with pkgs;
         [
+          (writeScriptBin "steamos-session-select" ''
+            #!${pkgs.stdenv.shell}
+            pkill -f gamescope
+          '')
           xorg.libXcursor
           xorg.libXi
           xorg.libXinerama

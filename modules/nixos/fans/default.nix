@@ -19,11 +19,9 @@
       (lib.hiPrio (
         outoftree.pkgs.${pkgs.system}.it87.overrideAttrs (super: {
           # Updates to newer version, needed by X870E aorus master mobo https://github.com/NixOS/nixpkgs/pull/399927
-          postInstall =
-            (super.postInstall or "")
-            + ''
-              find $out -name '*.ko' -exec xz {} \;
-            '';
+          postInstall = (super.postInstall or "") + ''
+            find $out -name '*.ko' -exec xz {} \;
+          '';
         })
       )) # it87
     ];
