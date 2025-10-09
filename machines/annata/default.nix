@@ -34,6 +34,14 @@ in
     };
   };
   r2r.impermanence.enable = false;
+  services.flatpak.enable = true;
+  systemd.services.flatpak-repo = {
+    wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.flatpak ];
+    script = ''
+      flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    '';
+  };
 
   hardware = {
     keyd.enable = true;
@@ -131,7 +139,6 @@ in
       home.packages = with pkgs; [
         python3
         discord
-        stremio
         git
         keepassxc
         nixfmt-rfc-style
@@ -158,6 +165,8 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    flatpak
+    gnome-software
 
     # fans
     coolercontrol.coolercontrold

@@ -2,6 +2,9 @@
   description = "My NixOS flake";
 
   inputs = {
+    nix-flatpak = {
+      url = "github:gmodena/nix-flatpak"; # unstable branch. Use github:gmodena/nix-flatpak/?ref=<tag> to pin releases.
+    };
     chaotic = {
       url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     };
@@ -53,6 +56,7 @@
       agenix,
       chaotic,
       nixpkgs,
+      nix-flatpak,
       nixos-hardware,
       home-manager,
       impermanence,
@@ -84,6 +88,7 @@
           modules = [
             { nixpkgs.overlays = [ myOverlays ]; }
             nixos-hardware.nixosModules.gpd-pocket-4
+            nix-flatpak.nixosModules.nix-flatpak
             agenix.nixosModules.default
             chaotic.nixosModules.default
             {
