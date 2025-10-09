@@ -10,9 +10,10 @@ in
 {
   imports = with outputs.nixosModules; [
     impermanence
-    prompter
+    #prompter
     bluetooth
     boot
+    gow_wolf
     desktop
     nix
     cloud
@@ -34,15 +35,18 @@ in
       "r2r.passwd".file = ../../secrets/r2r.passwd.age;
     };
   };
-  virtualisation.docker = {
-    enable = true;
-  };
+#  virtualisation.docker = {
+#    enable = true;
+#  };
+  extraServices.gow_wolf.enable = true;
+  extraServices.gow_wolf.gpu_type = "amd";
+
   # wolf
-  networking.firewall = {
-    enable = true;
-    allowedTCPPorts = [ 47984 47989 48010 ];
-    allowedUDPPorts = [ 47999 48100 48200 ];
-  };
+#  networking.firewall = {
+#    enable = true;
+#    allowedTCPPorts = [ 47984 47989 48010 ];
+#    allowedUDPPorts = [ 47999 48100 48200 ];
+#  };
   r2r.impermanence.enable = false;
   programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
   programs.steam.gamescopeSession.args = [
@@ -185,6 +189,23 @@ in
         firefox.enable = true;
         vim.enable = true;
       };
+#      systemd.user.services.sunshine = {
+#        Unit = {
+#          Description = "sunshine";
+#          StartLimitIntervalSec = "500";
+#          StartLimitBurst = "5";
+#        };
+#        Install = {
+#          WantedBy = [ "default.target" ];
+#        };
+#        Service = {
+#          #ExecStart = "${pkgs.sunshine}/bin/sunshine"; 
+#          ExecStart = "${config.security.wrapperDir}/sunshine";
+#          Restart = "on-failure";
+#          RestartSec = "5s";
+#          ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+#        };
+#      };
 
       # The state version is required and should stay at the version you
       # originally installed.
@@ -194,11 +215,14 @@ in
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     flatpak
     gnome-software
+    kubectl
+    plasticity
 
     # fans
     coolercontrol.coolercontrold

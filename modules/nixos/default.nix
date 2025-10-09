@@ -5,6 +5,7 @@
   cloud = import ./cloud;
   desktop = import ./desktop;
   fans = import ./fans;
+  gow_wolf = import ./gow_wolf;
   kernel = import ./kernel;
   impermanence = import ./impermanence;
   network = import ./network;
