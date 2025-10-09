@@ -163,7 +163,7 @@ in {
       # Extra groups (not entirely sure this is needed)
       # Setup ops group
       users.groups.ops = {
-        gid = 1000; # Set the gid
+        gid = 2000; # Set the gid
       };
 
       users.users = lib.mkMerge [
@@ -171,7 +171,7 @@ in {
           # Setup ops user for ssh'ing into the box
           ops = {
             isNormalUser = true;
-            uid = 1000; # Set the uid
+            uid = 2000; # Set the uid
             group = "ops"; # Primary group for the user
             extraGroups = [
               "wheel"
