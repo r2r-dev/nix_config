@@ -15,7 +15,7 @@ in
 
     package = mkOption {
       type = types.package;
-      default = pkgs.linuxPackages_cachyos.kernel;
+      default = pkgs.linuxPackages_zen.kernel;
       description = "kernel package to use.";
     };
 

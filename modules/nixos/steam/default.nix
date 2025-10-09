@@ -93,30 +93,8 @@
     java.enable = true;
   };
 
-  hardware = {
-    #xone.enable = true;
-    xpadneo.enable = true;
-  };
 
   boot = {
-    kernelModules = with config.boot.kernelPackages; [
-      "hid-xpadneo"
-    ];
-    extraModulePackages = with config.boot.kernelPackages; [
-      xpadneo
-    ];
-    extraModprobeConfig = ''
-      options hid_xpadneo disable_deadzones=0 rumble_attenuation=0 trigger_rumble_mode=0 ff_connect_notify=1 disable_shift_mode=1
-
-      alias hid:b0005g*v0000045Ep000002E0 hid_xpadneo
-      alias hid:b0005g*v0000045Ep000002FD hid_xpadneo
-      alias hid:b0005g*v0000045Ep00000B05 hid_xpadneo
-      alias hid:b0005g*v0000045Ep00000B13 hid_xpadneo
-      alias hid:b0005g*v0000045Ep00000B20 hid_xpadneo
-      alias hid:b0005g*v0000045Ep00000B22 hid_xpadneo
-
-    '';
-
     kernel.sysctl = {
       # SteamOS/Fedora default, can help with performance.
       "vm.max_map_count" = 2147483642;
