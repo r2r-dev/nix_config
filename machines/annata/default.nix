@@ -18,6 +18,7 @@ in
     cloud
     kernel
     keyboard
+    steam
     xbox
     zerotier
     # Include the results of the hardware scan.
@@ -34,6 +35,29 @@ in
     };
   };
   r2r.impermanence.enable = false;
+  programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
+  programs.steam.gamescopeSession.args = [
+    "-W 2560"
+    "-H 1600"
+    "-w 2560"
+    "-h 1600"
+    "--fullscreen"
+    "--steam"
+    "-r 120"
+    "--xwayland-count 2"
+    "--adaptive-sync"
+    "--hdr-enabled"
+    "--hdr-itm-enabled"
+    "--mangoapp"
+  ];
+
+  programs.steam.gamescopeSession.steamArgs = [
+    "-pipewire-dmabuf"
+    "-gamepadui"
+    "-steamos3"
+  ];
+
+
   services.flatpak.enable = true;
   systemd.services.flatpak-repo = {
     wantedBy = [ "multi-user.target" ];
@@ -85,7 +109,6 @@ in
     kdeconnect.enable = true;
     coolercontrol.enable = true;
     firefox.enable = true;
-    steam.enable = true;
   };
 
   # Enable networking
