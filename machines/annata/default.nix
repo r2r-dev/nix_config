@@ -34,6 +34,15 @@ in
       "r2r.passwd".file = ../../secrets/r2r.passwd.age;
     };
   };
+  virtualisation.docker = {
+    enable = true;
+  };
+  # wolf
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 47984 47989 48010 ];
+    allowedUDPPorts = [ 47999 48100 48200 ];
+  };
   r2r.impermanence.enable = false;
   programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
   programs.steam.gamescopeSession.args = [
