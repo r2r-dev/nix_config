@@ -29,7 +29,9 @@
           };
         in
         rec {
-          it87 = pkgs.callPackage ./it87 { kernel = pkgs.linuxPackages_zen.kernel; };
+          it87 = pkgs.callPackage ./it87 {
+            kernel = pkgs.linuxPackages_zen.kernel;
+          };
         }
       );
     };

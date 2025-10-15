@@ -93,7 +93,6 @@
     java.enable = true;
   };
 
-
   boot = {
     kernel.sysctl = {
       # SteamOS/Fedora default, can help with performance.

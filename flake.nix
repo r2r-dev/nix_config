@@ -92,7 +92,9 @@
             agenix.nixosModules.default
             chaotic.nixosModules.default
             {
-              environment.systemPackages = [ agenix.packages.x86_64-linux.default ];
+              environment.systemPackages = [
+                agenix.packages.x86_64-linux.default
+              ];
               imports = [ home-manager.nixosModules.home-manager ];
 
               home-manager.users.r2r =
@@ -124,7 +126,9 @@
             agenix.nixosModules.default
             chaotic.nixosModules.default
             {
-              environment.systemPackages = [ agenix.packages.x86_64-linux.default ];
+              environment.systemPackages = [
+                agenix.packages.x86_64-linux.default
+              ];
               imports = [ home-manager.nixosModules.home-manager ];
 
               home-manager.users.r2r =

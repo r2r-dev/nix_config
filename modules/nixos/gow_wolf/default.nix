@@ -3,17 +3,23 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   # An object containing user configuration (in /etc/nixos/configuration.nix)
   cfg = config.extraServices.gow_wolf;
-in {
+in
+{
   # Create the main option to toggle the service state
   options.extraServices.gow_wolf = {
     enable = lib.mkEnableOption "gow_wolf";
 
     # Other options to go here
     gpu_type = lib.mkOption {
-      type = lib.types.enum ["amd" "nvidia" "software"];
+      type = lib.types.enum [
+        "amd"
+        "nvidia"
+        "software"
+      ];
       default = "software";
       example = "amd";
       description = "Which GPU backend to use.";
@@ -25,51 +31,55 @@ in {
     let
       # The docker-compose.yml file (as a JSON)
       wolfDevices =
-        if cfg.gpu_type == "amd"
-        then [
-          "/dev/dri"
-        ]
-        else if cfg.gpu_type == "nvidia"
-        then [
-          "/dev/dri"
-          "/dev/nvidia-uvm"
-          "/dev/nvidia-uvm-tools"
-          "/dev/nvidia-caps/nvidia-cap1"
-          "/dev/nvidia-caps/nvidia-cap2"
-          "/dev/nvidiactl"
-          "/dev/nvidia0"
-          "/dev/nvidia-modeset"
-        ]
-        else [];
+        if cfg.gpu_type == "amd" then
+          [
+            "/dev/dri"
+          ]
+        else if cfg.gpu_type == "nvidia" then
+          [
+            "/dev/dri"
+            "/dev/nvidia-uvm"
+            "/dev/nvidia-uvm-tools"
+            "/dev/nvidia-caps/nvidia-cap1"
+            "/dev/nvidia-caps/nvidia-cap2"
+            "/dev/nvidiactl"
+            "/dev/nvidia0"
+            "/dev/nvidia-modeset"
+          ]
+        else
+          [ ];
 
       wolfEnvironment =
-        if cfg.gpu_type == "software"
-        then [
-          "WOLF_RENDER_NODE=software"
-        ]
-        else if cfg.gpu_type == "nvidia"
-        then [
-          "NVIDIA_DRIVER_VOLUME_NAME=nvidia-driver-vol"
-        ] else
-        [];
+        if cfg.gpu_type == "software" then
+          [
+            "WOLF_RENDER_NODE=software"
+          ]
+        else if cfg.gpu_type == "nvidia" then
+          [
+            "NVIDIA_DRIVER_VOLUME_NAME=nvidia-driver-vol"
+          ]
+        else
+          [ ];
 
       wolfVolumes =
-        if cfg.gpu_type == "nvidia"
-        then [
-          "nvidia-driver-vol:/usr/nvidia:rw"
-        ]
-        else [];
+        if cfg.gpu_type == "nvidia" then
+          [
+            "nvidia-driver-vol:/usr/nvidia:rw"
+          ]
+        else
+          [ ];
 
       nvidiaVolume =
-        if cfg.gpu_type == "nvidia"
-        then {
-          volumes = {
-            nvidia-driver-vol = {
-              external = true;
+        if cfg.gpu_type == "nvidia" then
+          {
+            volumes = {
+              nvidia-driver-vol = {
+                external = true;
+              };
             };
-          };
-        }
-        else {};
+          }
+        else
+          { };
 
       dockerComposeConfig = {
         volumes = {
@@ -77,43 +87,39 @@ in {
             external = true;
           };
         };
-        services.wolf =
+        services.wolf = {
+          image = "ghcr.io/games-on-whales/wolf:stable";
+          environment = wolfEnvironment ++ [
+            "XDG_RUNTIME_DIR=/tmp/sockets"
+            "HOST_APPS_STATE_FOLDER=/etc/wolf"
+          ];
+          volumes = wolfVolumes ++ [
+            "/etc/wolf/:/etc/wolf"
+            "/tmp/sockets:/tmp/sockets:rw"
+            "/var/run/docker.sock:/var/run/docker.sock:rw"
+            "/dev/:/dev/:rw"
+            "/run/udev:/run/udev:rw"
+          ];
+          device_cgroup_rules = [ "c 13:* rmw" ];
+          devices = wolfDevices ++ [
+            "/dev/uinput"
+            "/dev/uhid"
+          ];
+          network_mode = "host";
+          restart = "unless-stopped";
+        };
+        #// nvidiaVolume; # Merge conditionally
+      };
+    in
+    {
+      environment.persistence."/persist" =
+        lib.mkIf config.r2r.impermanence.enable
           {
-            image = "ghcr.io/games-on-whales/wolf:stable";
-            environment =
-              wolfEnvironment
-              ++ [
-                "XDG_RUNTIME_DIR=/tmp/sockets"
-                "HOST_APPS_STATE_FOLDER=/etc/wolf"
-              ];
-            volumes =
-              wolfVolumes
-              ++ [
-                "/etc/wolf/:/etc/wolf"
-                "/tmp/sockets:/tmp/sockets:rw"
-                "/var/run/docker.sock:/var/run/docker.sock:rw"
-                "/dev/:/dev/:rw"
-                "/run/udev:/run/udev:rw"
-              ];
-            device_cgroup_rules = ["c 13:* rmw"];
-            devices =
-              wolfDevices
-              ++ [
-                "/dev/uinput"
-                "/dev/uhid"
-              ];
-            network_mode = "host";
-            restart = "unless-stopped";
+            directories = [
+              "/etc/wolf"
+              "/docker"
+            ];
           };
-          #// nvidiaVolume; # Merge conditionally
-      };
-    in {
-      environment.persistence."/persist" = lib.mkIf config.r2r.impermanence.enable {
-    directories = [
-      "/etc/wolf"
-      "/docker"
-    ];
-      };
       #######################################################
       # GOW - Wolf Setup
       #######################################################
@@ -196,7 +202,10 @@ in {
         }
       ];
 
-      users.extraUsers.ops.extraGroups = ["audio" "ops"];
+      users.extraUsers.ops.extraGroups = [
+        "audio"
+        "ops"
+      ];
 
       # (Optional) Enable PulseAudio to run as a system-wide service (careful with security implications)
       # services.pulseaudio = {
@@ -218,53 +227,56 @@ in {
         data-root = "/docker/daemon";
       };
 
-      environment.etc."wolf/docker-compose.yml".text = builtins.toJSON dockerComposeConfig;
+      environment.etc."wolf/docker-compose.yml".text =
+        builtins.toJSON dockerComposeConfig;
 
       # Build out the nvidia-driver-vol if gpu is nvidia
-      systemd.services.nvidiaDriverVolumeSetup = lib.mkIf (cfg.gpu_type == "nvidia") {
-        description = "One-time NVIDIA driver Docker volume builder for GOW";
-        wantedBy = ["multi-user.target"];
+      systemd.services.nvidiaDriverVolumeSetup =
+        lib.mkIf (cfg.gpu_type == "nvidia")
+          {
+            description = "One-time NVIDIA driver Docker volume builder for GOW";
+            wantedBy = [ "multi-user.target" ];
 
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecStart = pkgs.writeShellScript "build-nvidia-volume" ''
-            set -euo pipefail
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              ExecStart = pkgs.writeShellScript "build-nvidia-volume" ''
+                set -euo pipefail
 
-            MARKER=/etc/wolf/.nvidia-driver-vol-ready
+                MARKER=/etc/wolf/.nvidia-driver-vol-ready
 
-            # Not sure if this "NVIDIA_CAPS" is needed
-            NVIDIA_CAPS=/dev/nvidia-caps
-            if [ ! -d "$NVIDIA_CAPS" ]; then
-              echo "Building NVIDIA-CAPS"
-              nvidia-container-cli --load-kmods info
-            fi
+                # Not sure if this "NVIDIA_CAPS" is needed
+                NVIDIA_CAPS=/dev/nvidia-caps
+                if [ ! -d "$NVIDIA_CAPS" ]; then
+                  echo "Building NVIDIA-CAPS"
+                  nvidia-container-cli --load-kmods info
+                fi
 
-            if [ -f "$MARKER" ]; then
-              echo "NVIDIA driver volume already built. Skipping."
-              exit 0
-            fi
+                if [ -f "$MARKER" ]; then
+                  echo "NVIDIA driver volume already built. Skipping."
+                  exit 0
+                fi
 
-            echo "Building NVIDIA driver volume - Started"
-            ${pkgs.curl}/bin/curl https://raw.githubusercontent.com/games-on-whales/gow/master/images/nvidia-driver/Dockerfile \
-              | ${pkgs.docker}/bin/docker build -t gow/nvidia-driver:latest -f - --build-arg NV_VERSION=$(cat /sys/module/nvidia/version) .
-            ${pkgs.docker}/bin/docker create --rm --mount source=nvidia-driver-vol,destination=/usr/nvidia gow/nvidia-driver:latest sh
+                echo "Building NVIDIA driver volume - Started"
+                ${pkgs.curl}/bin/curl https://raw.githubusercontent.com/games-on-whales/gow/master/images/nvidia-driver/Dockerfile \
+                  | ${pkgs.docker}/bin/docker build -t gow/nvidia-driver:latest -f - --build-arg NV_VERSION=$(cat /sys/module/nvidia/version) .
+                ${pkgs.docker}/bin/docker create --rm --mount source=nvidia-driver-vol,destination=/usr/nvidia gow/nvidia-driver:latest sh
 
-            echo "Building NVIDIA driver volume - Finished"
-            touch "$MARKER"
-          '';
-        };
+                echo "Building NVIDIA driver volume - Finished"
+                touch "$MARKER"
+              '';
+            };
 
-        # Ensure it runs after Docker is ready
-        after = ["docker.service"];
-        before = ["wolf.service"];
-        requires = ["docker.service"];
-      };
+            # Ensure it runs after Docker is ready
+            after = [ "docker.service" ];
+            before = [ "wolf.service" ];
+            requires = [ "docker.service" ];
+          };
 
       # Ensure the wolf service is started via docker-compose
       systemd.services.wolf = {
         description = "Wolf Docker Compose Service";
-        wantedBy = ["multi-user.target"];
+        wantedBy = [ "multi-user.target" ];
         serviceConfig = {
           ExecStart = "${pkgs.docker-compose}/bin/docker-compose -f /etc/wolf/docker-compose.yml up";
           ExecStop = "${pkgs.docker-compose}/bin/docker-compose -f /etc/wolf/docker-compose.yml down";
@@ -273,8 +285,18 @@ in {
         };
 
         # Make sure we don't start it until docker is up (and nvidia volume setup)
-        after = ["docker.service"] ++ lib.optional (cfg.gpu_type == "nvidia") "nvidiaDriverVolumeSetup.service";
-        requires = ["docker.service"] ++ lib.optional (cfg.gpu_type == "nvidia") "nvidiaDriverVolumeSetup.service";
+        after = [
+          "docker.service"
+        ]
+        ++ lib.optional (
+          cfg.gpu_type == "nvidia"
+        ) "nvidiaDriverVolumeSetup.service";
+        requires = [
+          "docker.service"
+        ]
+        ++ lib.optional (
+          cfg.gpu_type == "nvidia"
+        ) "nvidiaDriverVolumeSetup.service";
       };
     }
   );

@@ -5,7 +5,9 @@
   ...
 }:
 let
-  libfprint-focaltech = pkgs.callPackage ./fingerprint.nix { };
+  libfprint-focaltech =
+    pkgs.callPackage ./fingerprint.nix
+      { };
 in
 {
   imports = with outputs.nixosModules; [
@@ -63,7 +65,6 @@ in
     "-gamepadui"
     "-steamos3"
   ];
-
 
   services.flatpak.enable = true;
   systemd.services.flatpak-repo = {
@@ -184,23 +185,23 @@ in
         firefox.enable = true;
         vim.enable = true;
       };
-#      systemd.user.services.sunshine = {
-#        Unit = {
-#          Description = "sunshine";
-#          StartLimitIntervalSec = "500";
-#          StartLimitBurst = "5";
-#        };
-#        Install = {
-#          WantedBy = [ "default.target" ];
-#        };
-#        Service = {
-#          #ExecStart = "${pkgs.sunshine}/bin/sunshine"; 
-#          ExecStart = "${config.security.wrapperDir}/sunshine";
-#          Restart = "on-failure";
-#          RestartSec = "5s";
-#          ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
-#        };
-#      };
+      #      systemd.user.services.sunshine = {
+      #        Unit = {
+      #          Description = "sunshine";
+      #          StartLimitIntervalSec = "500";
+      #          StartLimitBurst = "5";
+      #        };
+      #        Install = {
+      #          WantedBy = [ "default.target" ];
+      #        };
+      #        Service = {
+      #          #ExecStart = "${pkgs.sunshine}/bin/sunshine";
+      #          ExecStart = "${config.security.wrapperDir}/sunshine";
+      #          Restart = "on-failure";
+      #          RestartSec = "5s";
+      #          ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+      #        };
+      #      };
 
       # The state version is required and should stay at the version you
       # originally installed.
@@ -209,7 +210,6 @@ in
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
