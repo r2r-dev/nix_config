@@ -22,7 +22,8 @@
         "usbhid"
         "sd_mod"
       ];
-      kernelModules = [ ];
+      # Needed to find the USB device during initrd stage
+      kernelModules = [ "usb_storage" ];
     };
     kernelModules = [ "kvm-amd" ];
     extraModulePackages = [ ];
@@ -37,10 +38,16 @@
     "pool0n0-decrypted" = {
       device = "/dev/disk/by-uuid/ff2679c1-748d-4959-b933-b041c08e6bdc";
       allowDiscards = true;
+      keyFileSize = 4096;
+      keyFile = "/dev/disk/by-id/usb-SanDisk_Ultra_USB_3.0_01012b4dc1ad0ae3bbc41188b24c69b67fe1b64263e20372f790c3aafa5a2eb714e4000000000000000000004407c638000346009155810723a8b161-0:0";
+      keyFileTimeout = 10;
     };
     "pool0n1-decrypted" = {
       device = "/dev/disk/by-uuid/8a613bfb-9307-467b-8223-91ef83de824c";
       allowDiscards = true;
+      keyFileSize = 4096;
+      keyFile = "/dev/disk/by-id/usb-SanDisk_Ultra_USB_3.0_01012b4dc1ad0ae3bbc41188b24c69b67fe1b64263e20372f790c3aafa5a2eb714e4000000000000000000004407c638000346009155810723a8b161-0:0";
+      keyFileTimeout = 10;
     };
   };
 
