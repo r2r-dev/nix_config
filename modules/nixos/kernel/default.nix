@@ -14,15 +14,14 @@ in
   options.kernel = {
 
     package = mkOption {
-      type = types.package;
-      default = pkgs.linuxPackages_zen.kernel;
+      default = pkgs.linuxPackages_zen;
       description = "kernel package to use.";
     };
 
+  };
     config = {
       boot = {
         kernelPackages = cfg.package;
       };
     };
-  };
 }
