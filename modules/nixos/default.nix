@@ -17,5 +17,6 @@
   ssh = import ./ssh;
   steam = import ./steam;
   xbox = import ./xbox;
+  wol = import ./wol;
   zerotier = import ./zerotier;
 }

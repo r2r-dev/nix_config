@@ -23,11 +23,22 @@
     steam
     xbox
     zerotier
+    wol
 
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
   r2r.impermanence.enable = true;
+  modules = {
+    # samsara specific modules
+    samsara = {
+      wol = {
+        enable = true;
+        interface = "enp14s0";
+      };
+    };
+  };
+
   programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
   programs.steam.gamescopeSession.args = [
     "-W 3840"
