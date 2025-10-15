@@ -17,6 +17,7 @@
     network
     nix
     nvidia
+    #prompter
     rgb
     sound
     ssh
@@ -37,6 +38,10 @@
         interface = "enp14s0";
       };
     };
+  };
+  cloud = {
+    enable = true;
+    puqu.enable = true;
   };
 
   extraServices.gow_wolf.enable = true;

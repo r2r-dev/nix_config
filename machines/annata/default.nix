@@ -36,6 +36,11 @@ in
     };
   };
 
+  cloud = {
+    enable = true;
+    puqu.enable = true;
+    warp.enable = true;
+  };
   r2r.impermanence.enable = false;
   programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
   programs.steam.gamescopeSession.args = [
