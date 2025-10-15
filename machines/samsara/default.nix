@@ -17,7 +17,6 @@
     network
     nix
     nvidia
-    prompter
     rgb
     sound
     ssh
@@ -137,7 +136,6 @@
         coder
         python3
         discord
-        stremio
         git
         keepassxc
         nixfmt-rfc-style
