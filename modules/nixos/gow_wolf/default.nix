@@ -47,7 +47,11 @@ in {
         then [
           "WOLF_RENDER_NODE=software"
         ]
-        else [];
+        else if cfg.gpu_type == "nvidia"
+        then [
+          "NVIDIA_DRIVER_VOLUME_NAME=nvidia-driver-vol"
+        ] else
+        [];
 
       wolfVolumes =
         if cfg.gpu_type == "nvidia"
@@ -68,7 +72,11 @@ in {
         else {};
 
       dockerComposeConfig = {
-        version = "3";
+        volumes = {
+          nvidia-driver-vol = {
+            external = true;
+          };
+        };
         services.wolf =
           {
             image = "ghcr.io/games-on-whales/wolf:stable";
@@ -96,10 +104,16 @@ in {
               ];
             network_mode = "host";
             restart = "unless-stopped";
-          }
-          // nvidiaVolume; # Merge conditionally
+          };
+          #// nvidiaVolume; # Merge conditionally
       };
     in {
+      environment.persistence."/persist" = lib.mkIf config.r2r.impermanence.enable {
+    directories = [
+      "/etc/wolf"
+      "/docker"
+    ];
+      };
       #######################################################
       # GOW - Wolf Setup
       #######################################################
@@ -153,6 +167,7 @@ in {
 
       # Enable Docker
       virtualisation.docker.enable = true;
+      virtualisation.docker.enableNvidia = true;
 
       # Enable PulseAudio
       #services.pulseaudio = {
@@ -196,7 +211,7 @@ in {
       systemd.tmpfiles.rules = [
         "d /etc/wolf 0755 root root"
         "d /tmp/sockets 0755 root root"
-        "d /ROMs 0755 ops users"
+        #"d /ROMs 0755 ops users"
       ];
 
       virtualisation.docker.daemon.settings = {

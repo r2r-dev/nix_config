@@ -7,6 +7,7 @@
 {
   imports = with outputs.nixosModules; [
     impermanence
+    gow_wolf
     bluetooth
     boot
     cloud
@@ -38,6 +39,10 @@
       };
     };
   };
+
+  extraServices.gow_wolf.enable = true;
+  extraServices.gow_wolf.gpu_type = "nvidia";
+  virtualisation.docker.storageDriver = "btrfs";
 
   programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
   programs.steam.gamescopeSession.args = [
