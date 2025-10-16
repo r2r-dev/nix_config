@@ -10,7 +10,6 @@
     gow_wolf
     bluetooth
     boot
-    cloud
     desktop
     fans
     kernel
@@ -40,7 +39,6 @@
     };
   };
   cloud = {
-    enable = true;
     puqu.enable = true;
   };
 
@@ -48,32 +46,37 @@
   extraServices.gow_wolf.gpu_type = "nvidia";
   virtualisation.docker.storageDriver = "btrfs";
 
-  programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
-  programs.steam.gamescopeSession.args = [
-    "-W 3840"
-    "-H 2160"
-    "-w 3840"
-    "-h 2160"
-    "--fullscreen"
-    "--steam"
-    "-r 120"
-    "--xwayland-count 2"
-    "--adaptive-sync"
-    "--hdr-enabled"
-    "--hdr-itm-enabled"
-    "--mangoapp"
-  ];
-
-  programs.steam.gamescopeSession.steamArgs = [
-    "-pipewire-dmabuf"
-    "-gamepadui"
-    "-steamos3"
-  ];
+  programs.steam.gamescopeSession = {
+    enable = true; # Integrates with programs.steam
+    args = [
+      "-W 3840"
+      "-H 2160"
+      "-w 3840"
+      "-h 2160"
+      "--fullscreen"
+      "--steam"
+      "-r 120"
+      "--xwayland-count 2"
+      "--adaptive-sync"
+      "--hdr-enabled"
+      "--hdr-itm-enabled"
+      "--mangoapp"
+    ];
+    steamArgs = [
+      "-pipewire-dmabuf"
+      "-gamepadui"
+      "-steamos3"
+    ];
+  };
 
   services.getty.autologinUser = "r2r";
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "r2r";
-  services.displayManager.defaultSession = pkgs.lib.mkForce "steam";
+  services.displayManager = {
+    autoLogin = {
+      enable = true;
+      user = "r2r";
+    };
+    defaultSession = pkgs.lib.mkForce "steam";
+  };
 
   age = {
     identityPaths = [
@@ -100,7 +103,6 @@
   environment.systemPackages = with pkgs; [
     nur.repos.xddxdd.uncategorized.vk-hdr-layer
     libimobiledevice
-    #ifuse # optional, to mount using 'ifuse'
   ];
 
   # Enable OpenGL

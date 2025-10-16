@@ -2,7 +2,6 @@
   bluetooth = import ./bluetooth;
   keyboard = import ./keyboard;
   boot = import ./boot;
-  cloud = import ./cloud;
   desktop = import ./desktop;
   fans = import ./fans;
   gow_wolf = import ./gow_wolf;

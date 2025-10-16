@@ -18,7 +18,7 @@
     in
     {
       pkgs = forAllSys (
-        system:
+        _:
         let
           pkgs = import nixpkgs {
             system = "x86_64-linux";
@@ -30,7 +30,7 @@
         in
         rec {
           it87 = pkgs.callPackage ./it87 {
-            kernel = pkgs.linuxPackages_zen.kernel;
+            inherit (pkgs.linuxPackages_zen) kernel;
           };
         }
       );

@@ -1,5 +1,4 @@
-{ system, outoftree }:
-self: super: {
+_: self: super: {
   linux-firmware = super.linux-firmware.overrideAttrs rec {
     version = "20250613";
     src = self.fetchzip {

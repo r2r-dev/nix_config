@@ -3,14 +3,47 @@
   lib,
   ...
 }:
+let
+  cfg = config.cloud;
+in
 {
-  services.zerotierone.enable = true;
-  environment.persistence."/persist" =
-    lib.mkIf config.r2r.impermanence.enable
-      {
-        files = [
-          "/var/lib/zerotier-one/identity.secret"
-          "/var/lib/zerotier-one/identity.public"
+  options.cloud = {
+    warp.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
+    puqu.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
+  };
+  config = lib.mkIf (cfg.warp.enable || cfg.puqu.enable) {
+    environment.persistence."/persist" =
+      lib.mkIf config.r2r.impermanence.enable
+        {
+          files = [
+            "/var/lib/zerotier-one/identity.secret"
+            "/var/lib/zerotier-one/identity.public"
+            (lib.mkIf cfg.puqu.enable "/var/lib/zerotier-one/networks.d/363c67c55a95648e.conf") # szamszur cloud
+            (lib.mkIf cfg.warp.enable "/var/lib/zerotier-one/networks.d/83048a0632f6a8b8.conf") # r2r cloud
+          ];
+        };
+    services = {
+      zerotierone = {
+        enable = true;
+        joinNetworks = [
+          (lib.mkIf cfg.puqu.enable "363c67c55a95648e") # szamszur cloud
+          (lib.mkIf cfg.warp.enable "83048a0632f6a8b8") # r2r cloud
         ];
       };
+      dnsmasq = {
+        enable = cfg.puqu.enable || cfg.warp.enable;
+        settings.server = [
+          (lib.mkIf cfg.puqu.enable "/szamszur.cloud/192.168.10.5")
+          (lib.mkIf cfg.puqu.enable "/puqu.io/192.168.25.5")
+          (lib.mkIf cfg.warp.enable "/warp.r2r.sh/192.168.168.8")
+        ];
+      };
+    };
+  };
 }

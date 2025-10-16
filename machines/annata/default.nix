@@ -18,7 +18,6 @@ in
     gow_wolf
     desktop
     nix
-    cloud
     kernel
     keyboard
     steam
@@ -39,7 +38,6 @@ in
   };
 
   cloud = {
-    enable = true;
     puqu.enable = true;
     warp.enable = true;
   };
