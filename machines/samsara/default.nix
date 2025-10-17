@@ -28,18 +28,19 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
-  r2r.impermanence.enable = true;
+  modules.nixos.impermanence.enable = true;
   modules = {
-    # samsara specific modules
-    samsara = {
+    nixos = {
+      zerotier = {
+        puqu = {
+          enable = true;
+        };
+      };
       wol = {
         enable = true;
         interface = "enp14s0";
       };
     };
-  };
-  cloud = {
-    puqu.enable = true;
   };
 
   extraServices.gow_wolf.enable = true;

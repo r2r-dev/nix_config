@@ -108,7 +108,7 @@ in
     in
     {
       environment.persistence."/persist" =
-        lib.mkIf config.r2r.impermanence.enable
+        lib.mkIf config.modules.nixos.impermanence.enable
           {
             directories = [
               "/etc/wolf"

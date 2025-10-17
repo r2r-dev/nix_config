@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.cloud;
+  cfg = config.modules.nixos.zerotier;
 in
 {
-  options.cloud = {
+  options.modules.nixos.zerotier = {
     warp.enable = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -19,7 +19,7 @@ in
   };
   config = lib.mkIf (cfg.warp.enable || cfg.puqu.enable) {
     environment.persistence."/persist" =
-      lib.mkIf config.r2r.impermanence.enable
+      lib.mkIf config.modules.nixos.impermanence.enable
         {
           files = [
             "/var/lib/zerotier-one/identity.secret"

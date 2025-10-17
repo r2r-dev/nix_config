@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.modules.samsara.wol;
+  cfg = config.modules.nixos.wol;
 in
 {
-  options.modules.samsara.wol = {
+  options.modules.nixos.wol = {
     enable = lib.mkEnableOption "Wake-on-LAN support";
     interface = lib.mkOption {
       type = lib.types.str;

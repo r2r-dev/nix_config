@@ -7,10 +7,10 @@
 with lib;
 
 let
-  cfg = config.r2r.impermanence;
+  cfg = config.modules.nixos.impermanence;
 in
 {
-  options.r2r.impermanence = {
+  options.modules.nixos.impermanence = {
     enable = mkEnableOption "impermanence";
 
   };

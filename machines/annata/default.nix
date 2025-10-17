@@ -37,11 +37,19 @@ in
     };
   };
 
-  cloud = {
-    puqu.enable = true;
-    warp.enable = true;
+  modules = {
+    nixos = {
+      zerotier = {
+        puqu = {
+          enable = true;
+        };
+        warp = {
+          enable = true;
+        };
+      };
+    };
   };
-  r2r.impermanence.enable = false;
+  modules.nixos.impermanence.enable = false;
   programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
   programs.steam.gamescopeSession.args = [
     "-W 2560"
