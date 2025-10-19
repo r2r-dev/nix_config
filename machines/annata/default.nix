@@ -12,7 +12,7 @@ in
 {
   imports = with outputs.nixosModules; [
     impermanence
-    #prompter
+    prompter
     bluetooth
     boot
     gow_wolf
@@ -39,6 +39,9 @@ in
 
   modules = {
     nixos = {
+      impermanence = {
+        enable = false;
+      };
       zerotier = {
         puqu = {
           enable = true;
@@ -49,28 +52,34 @@ in
       };
     };
   };
-  modules.nixos.impermanence.enable = false;
-  programs.steam.gamescopeSession.enable = true; # Integrates with programs.steam
-  programs.steam.gamescopeSession.args = [
-    "-W 2560"
-    "-H 1600"
-    "-w 2560"
-    "-h 1600"
-    "--fullscreen"
-    "--steam"
-    "-r 120"
-    "--xwayland-count 2"
-    "--adaptive-sync"
-    "--hdr-enabled"
-    "--hdr-itm-enabled"
-    "--mangoapp"
-  ];
 
-  programs.steam.gamescopeSession.steamArgs = [
-    "-pipewire-dmabuf"
-    "-gamepadui"
-    "-steamos3"
-  ];
+  programs = {
+    steam = {
+      gamescopeSession = {
+        enable = true; # Integrates with programs.steam
+        args = [
+          "-W 2560"
+          "-H 1600"
+          "-w 2560"
+          "-h 1600"
+          "--fullscreen"
+          "--steam"
+          "-r 120"
+          "--xwayland-count 2"
+          "--adaptive-sync"
+          "--hdr-enabled"
+          "--hdr-itm-enabled"
+          "--mangoapp"
+        ];
+
+        steamArgs = [
+          "-pipewire-dmabuf"
+          "-gamepadui"
+          "-steamos3"
+        ];
+      };
+    };
+  };
 
   services.flatpak.enable = true;
   systemd.services.flatpak-repo = {
@@ -191,23 +200,6 @@ in
         firefox.enable = true;
         vim.enable = true;
       };
-      #      systemd.user.services.sunshine = {
-      #        Unit = {
-      #          Description = "sunshine";
-      #          StartLimitIntervalSec = "500";
-      #          StartLimitBurst = "5";
-      #        };
-      #        Install = {
-      #          WantedBy = [ "default.target" ];
-      #        };
-      #        Service = {
-      #          #ExecStart = "${pkgs.sunshine}/bin/sunshine";
-      #          ExecStart = "${config.security.wrapperDir}/sunshine";
-      #          Restart = "on-failure";
-      #          RestartSec = "5s";
-      #          ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
-      #        };
-      #      };
 
       # The state version is required and should stay at the version you
       # originally installed.

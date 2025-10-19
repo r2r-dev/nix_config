@@ -16,7 +16,7 @@
     network
     nix
     nvidia
-    #prompter
+    prompter
     rgb
     sound
     ssh
@@ -28,9 +28,11 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
-  modules.nixos.impermanence.enable = true;
   modules = {
     nixos = {
+      impermanence = {
+        enable = true;
+      };
       zerotier = {
         puqu = {
           enable = true;

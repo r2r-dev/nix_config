@@ -8,20 +8,19 @@
 with lib;
 
 let
-  cfg = config.kernel;
+  cfg = config.modules.nixos.kernel;
 in
 {
-  options.kernel = {
-
-    package = mkOption {
+  options.modules.nixos.kernel = {
+    kernelPackages = mkOption {
       default = pkgs.linuxPackages_zen;
+      type = types.raw;
       description = "kernel package to use.";
     };
-
   };
   config = {
     boot = {
-      kernelPackages = cfg.package;
+      kernelPackages = cfg.kernelPackages;
     };
   };
 }
