@@ -42,6 +42,15 @@ in
       impermanence = {
         enable = false;
       };
+      bluetooth = {
+        enable = true;
+      };
+      boot = {
+        enable = true;
+      };
+      desktop = {
+        enable = true;
+      };
       zerotier = {
         puqu = {
           enable = true;

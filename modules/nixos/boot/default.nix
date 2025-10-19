@@ -1,48 +1,60 @@
 {
+  config,
+  lib,
   pkgs,
   ...
 }:
-
+let
+  cfg = config.modules.nixos.boot;
+in
 {
-  boot = {
-    loader = {
-      # Hide the OS choice for bootloaders.
-      # It's still possible to open the bootloader list by pressing any key
-      # It will just not appear on screen unless a key is pressed
-      timeout = 0;
-      efi = {
-        canTouchEfiVariables = true;
-      };
-
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 20;
-      };
+  options.modules.nixos.boot = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
     };
+  };
+  config = lib.mkIf (cfg.enable) {
+    boot = {
+      loader = {
+        # Hide the OS choice for bootloaders.
+        # It's still possible to open the bootloader list by pressing any key
+        # It will just not appear on screen unless a key is pressed
+        timeout = 0;
+        efi = {
+          canTouchEfiVariables = true;
+        };
 
-    kernelParams = [
-      "quiet"
-      "boot.shell_on_fail"
-      "loglevel=3"
-      "rd.systemd.show_status=false"
-      "rd.udev.log_level=3"
-      "udev.log_priority=3"
-    ];
+        systemd-boot = {
+          enable = true;
+          configurationLimit = 20;
+        };
+      };
 
-    plymouth = {
-      enable = true;
-      theme = "deus_ex";
-      themePackages = with pkgs; [
-        # By default we would install all themes
-        (adi1090x-plymouth-themes.override {
-          selected_themes = [ "deus_ex" ];
-        })
+      kernelParams = [
+        "quiet"
+        "boot.shell_on_fail"
+        "loglevel=3"
+        "rd.systemd.show_status=false"
+        "rd.udev.log_level=3"
+        "udev.log_priority=3"
       ];
+
+      plymouth = {
+        enable = true;
+        theme = "deus_ex";
+        themePackages = with pkgs; [
+          # By default we would install all themes
+          (adi1090x-plymouth-themes.override {
+            selected_themes = [ "deus_ex" ];
+          })
+        ];
+      };
+
+      # Enable "Silent Boot"
+      consoleLogLevel = 0;
+
+      initrd.verbose = false;
     };
-
-    # Enable "Silent Boot"
-    consoleLogLevel = 0;
-
-    initrd.verbose = false;
   };
 }
