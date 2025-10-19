@@ -51,6 +51,9 @@ in
       desktop = {
         enable = true;
       };
+      keyboard = {
+        enable = false;
+      };
       zerotier = {
         puqu = {
           enable = true;
@@ -100,7 +103,6 @@ in
   };
 
   hardware = {
-    keyd.enable = true;
     ledger.enable = true;
     gpd.pocket4.audioEnhancement.enable = true;
     # Enable interface to sensors like Accelerometers and Light sensors

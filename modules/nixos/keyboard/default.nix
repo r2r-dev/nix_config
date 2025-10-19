@@ -5,10 +5,10 @@
 }:
 with lib;
 let
-  cfg = config.hardware.keyd;
+  cfg = config.modules.nixos.keyboard;
 in
 {
-  options.hardware.keyd = with types; {
+  options.modules.nixos.keyboard = with types; {
     enable = mkEnableOption "Enable keyd";
   };
 
