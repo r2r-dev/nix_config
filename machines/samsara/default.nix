@@ -42,6 +42,13 @@
       desktop = {
         enable = true;
       };
+      gow_wolf = {
+        enable = true;
+        gpu_type = "nvidia";
+      };
+      fans = {
+        enable = true;
+      };
       zerotier = {
         puqu = {
           enable = true;
@@ -54,8 +61,6 @@
     };
   };
 
-  extraServices.gow_wolf.enable = true;
-  extraServices.gow_wolf.gpu_type = "nvidia";
   virtualisation.docker.storageDriver = "btrfs";
 
   programs.steam.gamescopeSession = {

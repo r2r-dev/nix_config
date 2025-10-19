@@ -5,12 +5,11 @@
   ...
 }:
 let
-  # An object containing user configuration (in /etc/nixos/configuration.nix)
-  cfg = config.extraServices.gow_wolf;
+  cfg = config.modules.nixos.gow_wolf;
 in
 {
   # Create the main option to toggle the service state
-  options.extraServices.gow_wolf = {
+  options.modules.nixos.gow_wolf = {
     enable = lib.mkEnableOption "gow_wolf";
 
     # Other options to go here
