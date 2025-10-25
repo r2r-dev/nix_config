@@ -12,6 +12,7 @@ in
 {
   imports = with outputs.nixosModules; [
     impermanence
+    homeassistant
     prompter
     bluetooth
     boot
@@ -49,6 +50,9 @@ in
         enable = true;
       };
       desktop = {
+        enable = true;
+      };
+      homeassistant = {
         enable = true;
       };
       keyboard = {

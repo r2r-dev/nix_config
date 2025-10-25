@@ -1,12 +1,13 @@
 {
   bluetooth = import ./bluetooth;
-  keyboard = import ./keyboard;
   boot = import ./boot;
   desktop = import ./desktop;
   fans = import ./fans;
   gow_wolf = import ./gow_wolf;
-  kernel = import ./kernel;
+  homeassistant = import ./homeassistant;
   impermanence = import ./impermanence;
+  kernel = import ./kernel;
+  keyboard = import ./keyboard;
   network = import ./network;
   nix = import ./nix;
   nvidia = import ./nvidia;
@@ -15,7 +16,7 @@
   sound = import ./sound;
   ssh = import ./ssh;
   steam = import ./steam;
-  xbox = import ./xbox;
   wol = import ./wol;
+  xbox = import ./xbox;
   zerotier = import ./zerotier;
 }

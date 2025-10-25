@@ -7,6 +7,7 @@
 {
   imports = with outputs.nixosModules; [
     impermanence
+    homeassistant
     gow_wolf
     bluetooth
     boot
@@ -45,6 +46,9 @@
       gow_wolf = {
         enable = true;
         gpu_type = "nvidia";
+      };
+      homeassistant = {
+        enable = true;
       };
       fans = {
         enable = true;
