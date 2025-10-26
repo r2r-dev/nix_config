@@ -114,6 +114,13 @@ in
               "/docker"
             ];
           };
+      services.udev.packages = [ # prevent wolf's virtual controllers from being picked up by host session
+        (pkgs.writeTextFile {
+          name = "wolf-virtual-controller-udev-rules";
+          text = ''SUBSYSTEMS=="input", ATTRS{name}=="Wolf X-Box One (virtual) pad", MODE="0660", ENV{ID_SEAT}="seat9", GROUP="root"'';
+          destination = "/etc/udev/rules.d/60-wolf-virtual-controller-hid.rules";
+        })
+      ];
       #######################################################
       # GOW - Wolf Setup
       #######################################################
