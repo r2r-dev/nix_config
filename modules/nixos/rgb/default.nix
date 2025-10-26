@@ -15,11 +15,6 @@
           mkdir -p $out/etc/systemd
           make install
         '';
-        postPatch = ''
-          substituteInPlace OpenRGB.pro \
-          --replace-fail "/etc/systemd" "$out/etc/systemd"
-        ''
-        + previousAttrs.postPatch;
       }
     );
   };
