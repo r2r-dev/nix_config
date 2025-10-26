@@ -25,7 +25,7 @@
       # Needed to find the USB device during initrd stage
       kernelModules = [ "usb_storage" ];
     };
-    kernelModules = [ "kvm-amd" ];
+    kernelModules = [ "kvm-amd" "fuse"];
     extraModulePackages = [ ];
   };
 
