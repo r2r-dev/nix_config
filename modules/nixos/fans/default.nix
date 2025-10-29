@@ -15,7 +15,7 @@ in
       default = false;
     };
   };
-  config = lib.mkIf (cfg.enable) {
+  config = lib.mkIf cfg.enable {
     boot = {
       kernelParams = [
         "acpi_enforce_resources=lax" # proper temp - fan loop

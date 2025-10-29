@@ -14,7 +14,7 @@ in
       default = false;
     };
   };
-  config = lib.mkIf (cfg.enable) {
+  config = lib.mkIf cfg.enable {
     boot = {
       loader = {
         # Hide the OS choice for bootloaders.

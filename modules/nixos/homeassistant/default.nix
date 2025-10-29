@@ -13,7 +13,7 @@ in
       default = false;
     };
   };
-  config = lib.mkIf (cfg.enable) {
+  config = lib.mkIf cfg.enable {
     users.groups.homeassistant = { };
     users.users.homeassistant = {
       group = "homeassistant";

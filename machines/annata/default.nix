@@ -73,14 +73,15 @@ in
 
   # BEGIN virt-manager
   programs.virt-manager.enable = true;
-  users.groups.libvirtd.members = ["r2r"];
+  users.groups.libvirtd.members = [ "r2r" ];
   virtualisationlibvirtd.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
 
   services.dnsmasq.settings.bind-dynamic = true; # make dnsmasq play nicely with libvirtd's dns
-  networking.useDHCP = false;  # do not eable dhcp on all interfaces
+  networking.useDHCP = false; # do not eable dhcp on all interfaces
   networking.bridges = {
-    "br0" = { # set up bridge if for virtual machines
+    "br0" = {
+      # set up bridge if for virtual machines
       interfaces = [ "eth1" ];
     };
   };

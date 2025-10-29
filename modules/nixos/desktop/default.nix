@@ -13,7 +13,7 @@ in
       default = false;
     };
   };
-  config = lib.mkIf (cfg.enable) {
+  config = lib.mkIf cfg.enable {
     # Enable the KDE Plasma Desktop Environment.
     services = {
       displayManager.sddm.enable = true;

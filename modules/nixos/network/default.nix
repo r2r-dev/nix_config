@@ -13,7 +13,7 @@ in
       default = false;
     };
   };
-  config = lib.mkIf (cfg.enable) {
+  config = lib.mkIf cfg.enable {
     environment.persistence."/persist" =
       lib.mkIf config.modules.nixos.impermanence.enable
         {

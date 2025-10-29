@@ -8,7 +8,7 @@
     motherboard = "amd";
     enable = true;
     package = pkgs.openrgb_git.overrideAttrs (
-      _: previousAttrs: {
+      _: _: {
         installPhase = ''
           export LC_ALL=C.UTF-8
           mkdir $out

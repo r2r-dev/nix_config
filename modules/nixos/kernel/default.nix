@@ -20,7 +20,7 @@ in
   };
   config = {
     boot = {
-      kernelPackages = cfg.kernelPackages;
+      inherit (cfg) kernelPackages;
     };
   };
 }
