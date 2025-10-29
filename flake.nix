@@ -36,6 +36,11 @@
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
     };
+    # Steamdeck related options
+    jovian-nixos = {
+      url = "github:Jovian-Experiments/Jovian-NixOS";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     disko = {
       url = "github:nix-community/disko/latest";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -58,6 +63,7 @@
       nixpkgs,
       nix-flatpak,
       nixos-hardware,
+      jovian-nixos,
       home-manager,
       impermanence,
       outoftree,
@@ -91,6 +97,7 @@
             nix-flatpak.nixosModules.nix-flatpak
             agenix.nixosModules.default
             chaotic.nixosModules.default
+            jovian-nixos.nixosModules.default
             {
               environment.systemPackages = [
                 agenix.packages.x86_64-linux.default
