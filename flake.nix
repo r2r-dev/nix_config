@@ -41,6 +41,10 @@
       url = "github:Jovian-Experiments/Jovian-NixOS";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    eden = {
+      url = "github:grantimatter/eden-flake";
+      inputs.nixpkgs.follows = "nixpkgs"; # Do not override if using Cachix
+    };
     disko = {
       url = "github:nix-community/disko/latest";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -64,6 +68,7 @@
       nix-flatpak,
       nixos-hardware,
       jovian-nixos,
+      eden,
       home-manager,
       impermanence,
       outoftree,
@@ -98,6 +103,7 @@
             agenix.nixosModules.default
             chaotic.nixosModules.default
             jovian-nixos.nixosModules.default
+            inputs.eden.nixosModules.default
             {
               environment.systemPackages = [
                 agenix.packages.x86_64-linux.default
@@ -132,6 +138,8 @@
             nur.modules.nixos.default
             agenix.nixosModules.default
             chaotic.nixosModules.default
+            jovian-nixos.nixosModules.default
+            inputs.eden.nixosModules.default
             {
               environment.systemPackages = [
                 agenix.packages.x86_64-linux.default

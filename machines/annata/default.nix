@@ -68,27 +68,28 @@ in
       };
     };
   };
-  jovian.decky-loader.enable = true;
-  jovian.decky-loader.user = "r2r";
+  programs.eden = {
+    enable = true;
+  };
 
   # BEGIN virt-manager
-  programs.virt-manager.enable = true;
-  users.groups.libvirtd.members = [ "r2r" ];
-  virtualisationlibvirtd.enable = true;
-  virtualisation.spiceUSBRedirection.enable = true;
+  #programs.virt-manager.enable = true;
+  #users.groups.libvirtd.members = [ "r2r" ];
+  #virtualisation.libvirtd.enable = true;
+  #virtualisation.spiceUSBRedirection.enable = true;
 
-  services.dnsmasq.settings.bind-dynamic = true; # make dnsmasq play nicely with libvirtd's dns
-  networking.useDHCP = false; # do not eable dhcp on all interfaces
-  networking.bridges = {
-    "br0" = {
-      # set up bridge if for virtual machines
-      interfaces = [ "eth1" ];
-    };
-  };
-  networking.interfaces.eth1.useDHCP = false;
-  networking.interfaces.br0.useDHCP = true; # avoid receiving the same ip on both physical and bridged if
-  networking.interfaces.eth0.useDHCP = true;
-  networking.interfaces.wlp195s0.useDHCP = true;
+  #services.dnsmasq.settings.bind-dynamic = true; # make dnsmasq play nicely with libvirtd's dns
+  #networking.useDHCP = false; # do not eable dhcp on all interfaces
+  #networking.bridges = {
+  #  "br0" = {
+  #    # set up bridge if for virtual machines
+  #    interfaces = [ "eth1" ];
+  #  };
+  #};
+  #networking.interfaces.eth1.useDHCP = false;
+  #networking.interfaces.br0.useDHCP = true; # avoid receiving the same ip on both physical and bridged if
+  #networking.interfaces.eth0.useDHCP = true;
+  #networking.interfaces.wlp195s0.useDHCP = true;
   # END virt-manager
 
   programs = {
@@ -225,7 +226,6 @@ in
         git
         keepassxc
         nixfmt-rfc-style
-        protonvpn-cli
         protonvpn-gui
         signal-desktop
         moonlight-qt
@@ -256,7 +256,7 @@ in
 
     # fans
     coolercontrol.coolercontrold
-    coolercontrol.coolercontrol-liqctld
+    #coolercontrol.coolercontrol-liquidctld
     liquidctl
     lm_sensors # tools and drivers for monitoring temperatures, voltage, and fans
     coder
