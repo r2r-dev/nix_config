@@ -167,7 +167,6 @@
         git
         keepassxc
         nixfmt-rfc-style
-        protonvpn-cli
         protonvpn-gui
         signal-desktop
         sshx # TODO ssh module
