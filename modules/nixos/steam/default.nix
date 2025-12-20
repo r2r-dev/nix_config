@@ -15,7 +15,7 @@
       steamtinkerlaunch
       gamescope
       gamescope-wsi
-      lutris
+      #lutris # blocked by https://github.com/NixOS/nixpkgs/pull/454074
       nexusmods-app-unfree
       vulkan-tools
     ];
