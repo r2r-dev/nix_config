@@ -17,7 +17,7 @@
     network
     nix
     nvidia
-    prompter
+    #prompter broken on 6.18.1-zen-dev
     rgb
     sound
     ssh
