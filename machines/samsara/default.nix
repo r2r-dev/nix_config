@@ -65,6 +65,10 @@
     };
   };
 
+  programs.eden = {
+    enable = true;
+  };
+
   virtualisation.docker.storageDriver = "btrfs";
 
   programs.steam.gamescopeSession = {
