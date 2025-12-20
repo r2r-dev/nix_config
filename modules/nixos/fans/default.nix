@@ -42,7 +42,7 @@ in
     environment.systemPackages = with pkgs; [
       # fans
       coolercontrol.coolercontrold
-      coolercontrol.coolercontrol-liqctld
+      #coolercontrol.coolercontrol-liqctld
       liquidctl
       lm_sensors # tools and drivers for monitoring temperatures, voltage, and fans
     ];
