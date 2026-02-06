@@ -108,16 +108,9 @@
               environment.systemPackages = [
                 agenix.packages.x86_64-linux.default
               ];
-              imports = [ home-manager.nixosModules.home-manager ];
-
-              home-manager.users.r2r =
-                { ... }:
-                {
-                  imports = [
-                    impermanence.homeManagerModules.impermanence
-                    #        outputs.homeManagerModules.impermanence
-                  ];
-                };
+              imports = [
+                home-manager.nixosModules.home-manager
+              ];
             }
             impermanence.nixosModules.impermanence
             ./machines/annata
@@ -144,16 +137,10 @@
               environment.systemPackages = [
                 agenix.packages.x86_64-linux.default
               ];
-              imports = [ home-manager.nixosModules.home-manager ];
-
-              home-manager.users.r2r =
-                { ... }:
-                {
-                  imports = [
-                    impermanence.homeManagerModules.impermanence
-                    outputs.homeManagerModules.impermanence
-                  ];
-                };
+              imports = [
+                impermanence.nixosModules.impermanence
+                home-manager.nixosModules.home-manager
+              ];
             }
             impermanence.nixosModules.impermanence
             ./machines/samsara
