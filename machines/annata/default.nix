@@ -138,8 +138,8 @@ in
   services = {
     udev.extraHwdb = ''
       # GPD Pocket 4
-      sensor:modalias:*
-        ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, 1, 0; 1, 0, 0
+      sensor:modalias:acpi:MXC6655*:dmi:*:svnGPD:pnG1628-04:*
+       ACCEL_MOUNT_MATRIX=-1, 0, 0; 0, 1, 0; 0, 0, 1
     '';
     # Enable fprintd
     fprintd = {
