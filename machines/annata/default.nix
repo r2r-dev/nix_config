@@ -38,6 +38,20 @@ in
     };
   };
 
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
+  services.printing = {
+    enable = true;
+    drivers = with pkgs; [
+      cups-filters
+      cups-browsed
+    ];
+  };
+
   modules = {
     nixos = {
       impermanence = {
@@ -148,8 +162,6 @@ in
         libfprint = libfprint-focaltech;
       };
     };
-    # Enable CUPS to print documents.
-    printing.enable = true;
 
     # Enable sound with pipewire.
     pulseaudio.enable = false;
