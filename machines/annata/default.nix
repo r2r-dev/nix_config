@@ -233,16 +233,18 @@ in
         '';
       };
       home.packages = with pkgs; [
-        python3
         discord
-        git
-        keepassxc
-        nixfmt-rfc-style
-        protonvpn-gui
         signal-desktop
+        keepassxc
         moonlight-qt
-        sshx # TODO ssh module
+        nixfmt
+        openscad-unstable
+        protonvpn-gui
+        python3
         sshfs # TODO ssh module
+        sshx # TODO ssh module
+        plasticity
+        coder
       ];
       programs = {
         bash.enable = true;
@@ -261,20 +263,18 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    flatpak
-    gnome-software
-    kubectl
-    plasticity
-
     # fans
     coolercontrol.coolercontrold
     #coolercontrol.coolercontrol-liquidctld
+    flatpak
+    git
+    gnome-software
+    kubectl
     liquidctl
     lm_sensors # tools and drivers for monitoring temperatures, voltage, and fans
-    coder
-    vim
-    maliit-keyboard
     maliit-framework
+    maliit-keyboard
+    vim
   ];
 
   services.openssh.enable = true;
