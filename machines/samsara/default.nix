@@ -173,15 +173,10 @@
         '';
       };
       home.packages = with pkgs; [
-        coder
         python3
-        discord
         git
         keepassxc
         nixfmt-rfc-style
-        protonvpn-gui
-        signal-desktop
-        sshx # TODO ssh module
         sshfs # TODO ssh module
       ];
       programs = {
