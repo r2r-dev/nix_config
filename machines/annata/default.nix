@@ -74,7 +74,7 @@ in
       };
       zerotier = {
         puqu = {
-          enable = true;
+          enable = false;
         };
         warp = {
           enable = false;
