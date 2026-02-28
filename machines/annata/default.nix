@@ -157,7 +157,7 @@ in
     '';
     # Enable fprintd
     fprintd = {
-      enable = true;
+      enable = false;
       package = pkgs.fprintd.override {
         libfprint = libfprint-focaltech;
       };
