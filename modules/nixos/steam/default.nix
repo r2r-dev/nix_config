@@ -10,13 +10,11 @@
     packages = with pkgs; [
       bottles
       gamemode
+      gamescope
+      gamescope-wsi
       mangohud
       moonlight-qt
       steamtinkerlaunch
-      gamescope
-      gamescope-wsi
-      #lutris # blocked by https://github.com/NixOS/nixpkgs/pull/454074
-      nexusmods-app-unfree
       vulkan-tools
     ];
   };
@@ -66,19 +64,19 @@
             #!${pkgs.stdenv.shell}
             pkill -f gamescope
           '')
-          xorg.libXcursor
-          xorg.libXi
-          xorg.libXinerama
-          xorg.libXScrnSaver
-          xorg.libxcb
+          gamemode
+          keyutils
+          libkrb5
           libpng
           libpulseaudio
           libvorbis
-          stdenv.cc.cc.lib
-          libkrb5
-          keyutils
-          gamemode
+          libxcb
+          libXcursor
+          libXi
+          libXinerama
+          libXScrnSaver
           procps
+          stdenv.cc.cc.lib
           usbutils
         ]
         ++ config.fonts.packages;
