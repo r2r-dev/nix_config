@@ -2,6 +2,10 @@
   description = "My NixOS flake";
 
   inputs = {
+    proton-cachyos = {
+      url = "github:powerofthe69/proton-cachyos-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-flatpak = {
       url = "github:gmodena/nix-flatpak"; # unstable branch. Use github:gmodena/nix-flatpak/?ref=<tag> to pin releases.
     };
@@ -74,6 +78,7 @@
       home-manager,
       impermanence,
       outoftree,
+      proton-cachyos,
       nur,
       ...
     }@inputs:
@@ -129,7 +134,7 @@
               ;
           };
           modules = [
-            { nixpkgs.overlays = [ myOverlays ]; }
+            { nixpkgs.overlays = [ myOverlays proton-cachyos.overlays.default ]; }
             nur.modules.nixos.default
             agenix.nixosModules.default
             chaotic.nixosModules.default

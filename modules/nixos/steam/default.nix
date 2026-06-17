@@ -44,7 +44,7 @@
   programs = {
     gamescope = {
       enable = true;
-      capSysNice = true;
+      capSysNice = false; # https://github.com/NixOS/nixpkgs/issues/523427
     };
     gamemode = {
       enable = true;
@@ -81,6 +81,7 @@
         ]
         ++ config.fonts.packages;
       extraCompatPackages = with pkgs; [
+        proton-cachyos
         steamtinkerlaunch
       ];
       remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
