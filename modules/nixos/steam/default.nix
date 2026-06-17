@@ -15,6 +15,9 @@
       mangohud
       moonlight-qt
       steamtinkerlaunch
+      gamescope
+      gamescope-wsi
+      #lutris # blocked by https://github.com/NixOS/nixpkgs/pull/454074
       vulkan-tools
     ];
   };
