@@ -176,8 +176,9 @@ in
       # Enable Docker
       virtualisation.docker = {
         enable = true;
-        enableNvidia = true;
+        #enableNvidia = true;
       };
+      #hardware.nvidia-container-toolkit.enable = true;
 
       # Enable PulseAudio
       #services.pulseaudio = {
@@ -236,47 +237,45 @@ in
 
       # Build out the nvidia-driver-vol if gpu is nvidia
       systemd.services = {
-        nvidiaDriverVolumeSetup =
-          lib.mkIf (cfg.gpu_type == "nvidia")
-            {
-              description = "One-time NVIDIA driver Docker volume builder for GOW";
-              wantedBy = [ "multi-user.target" ];
+        nvidiaDriverVolumeSetup = lib.mkIf (cfg.gpu_type == "nvidia") {
+          description = "One-time NVIDIA driver Docker volume builder for GOW";
+          wantedBy = [ "multi-user.target" ];
 
-              serviceConfig = {
-                Type = "oneshot";
-                RemainAfterExit = true;
-                ExecStart = pkgs.writeShellScript "build-nvidia-volume" ''
-                  set -euo pipefail
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            ExecStart = pkgs.writeShellScript "build-nvidia-volume" ''
+              set -euo pipefail
 
-                  MARKER=/etc/wolf/.nvidia-driver-vol-ready
+              MARKER=/etc/wolf/.nvidia-driver-vol-ready
 
-                  # Not sure if this "NVIDIA_CAPS" is needed
-                  NVIDIA_CAPS=/dev/nvidia-caps
-                  if [ ! -d "$NVIDIA_CAPS" ]; then
-                    echo "Building NVIDIA-CAPS"
-                    nvidia-container-cli --load-kmods info
-                  fi
+              # Not sure if this "NVIDIA_CAPS" is needed
+              NVIDIA_CAPS=/dev/nvidia-caps
+              if [ ! -d "$NVIDIA_CAPS" ]; then
+                echo "Building NVIDIA-CAPS"
+                nvidia-container-cli --load-kmods info
+              fi
 
-                  if [ -f "$MARKER" ]; then
-                    echo "NVIDIA driver volume already built. Skipping."
-                    exit 0
-                  fi
+              if [ -f "$MARKER" ]; then
+                echo "NVIDIA driver volume already built. Skipping."
+                exit 0
+              fi
 
-                  echo "Building NVIDIA driver volume - Started"
-                  ${pkgs.curl}/bin/curl https://raw.githubusercontent.com/games-on-whales/gow/master/images/nvidia-driver/Dockerfile \
-                    | ${pkgs.docker}/bin/docker build -t gow/nvidia-driver:latest -f - --build-arg NV_VERSION=$(cat /sys/module/nvidia/version) .
-                  ${pkgs.docker}/bin/docker create --rm --mount source=nvidia-driver-vol,destination=/usr/nvidia gow/nvidia-driver:latest sh
+              echo "Building NVIDIA driver volume - Started"
+              ${pkgs.curl}/bin/curl https://raw.githubusercontent.com/games-on-whales/gow/master/images/nvidia-driver/Dockerfile \
+                | ${pkgs.docker}/bin/docker build -t gow/nvidia-driver:latest -f - --build-arg NV_VERSION=$(cat /sys/module/nvidia/version) .
+              ${pkgs.docker}/bin/docker create --rm --mount source=nvidia-driver-vol,destination=/usr/nvidia gow/nvidia-driver:latest sh
 
-                  echo "Building NVIDIA driver volume - Finished"
-                  touch "$MARKER"
-                '';
-              };
+              echo "Building NVIDIA driver volume - Finished"
+              touch "$MARKER"
+            '';
+          };
 
-              # Ensure it runs after Docker is ready
-              after = [ "docker.service" ];
-              before = [ "wolf.service" ];
-              requires = [ "docker.service" ];
-            };
+          # Ensure it runs after Docker is ready
+          after = [ "docker.service" ];
+          before = [ "wolf.service" ];
+          requires = [ "docker.service" ];
+        };
 
         # Ensure the wolf service is started via docker-compose
         wolf = {
@@ -293,15 +292,11 @@ in
           after = [
             "docker.service"
           ]
-          ++ lib.optional (
-            cfg.gpu_type == "nvidia"
-          ) "nvidiaDriverVolumeSetup.service";
+          ++ lib.optional (cfg.gpu_type == "nvidia") "nvidiaDriverVolumeSetup.service";
           requires = [
             "docker.service"
           ]
-          ++ lib.optional (
-            cfg.gpu_type == "nvidia"
-          ) "nvidiaDriverVolumeSetup.service";
+          ++ lib.optional (cfg.gpu_type == "nvidia") "nvidiaDriverVolumeSetup.service";
         };
       };
     }
