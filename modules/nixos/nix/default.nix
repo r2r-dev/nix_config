@@ -5,7 +5,7 @@
 }:
 
 {
-  environment.persistence."/persist" =
+  environment.persistence.main =
     lib.mkIf config.modules.nixos.impermanence.enable
       {
         hideMounts = true;

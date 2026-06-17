@@ -21,6 +21,8 @@
     };
     impermanence = {
       url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "";
+      inputs.home-manager.follows = "";
     };
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -138,7 +140,6 @@
                 agenix.packages.x86_64-linux.default
               ];
               imports = [
-                impermanence.nixosModules.impermanence
                 home-manager.nixosModules.home-manager
               ];
             }

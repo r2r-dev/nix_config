@@ -106,7 +106,7 @@ in
       // nvidiaVolume; # Merge conditionally
     in
     {
-      environment.persistence."/persist" =
+      environment.persistence.main =
         lib.mkIf config.modules.nixos.impermanence.enable
           {
             directories = [

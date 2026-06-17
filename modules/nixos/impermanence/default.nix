@@ -15,7 +15,8 @@ in
 
   };
   config = mkIf cfg.enable {
-    environment.persistence."/persist" = {
+    environment.persistence.main = {
+      persistentStoragePath = "/persist";
       hideMounts = true;
       directories = [
         "/var/lib/systemd/coredump"

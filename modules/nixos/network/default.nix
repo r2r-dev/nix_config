@@ -14,7 +14,7 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    environment.persistence."/persist" =
+    environment.persistence.main =
       lib.mkIf config.modules.nixos.impermanence.enable
         {
           directories = [

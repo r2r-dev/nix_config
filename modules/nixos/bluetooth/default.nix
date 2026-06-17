@@ -20,7 +20,7 @@ in
       powerOnBoot = true;
     };
     services.blueman.enable = true;
-    environment.persistence."/persist" =
+    environment.persistence.main =
       lib.mkIf config.modules.nixos.impermanence.enable
         {
           directories = [
