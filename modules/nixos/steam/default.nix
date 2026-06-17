@@ -24,7 +24,7 @@
 
   services = {
     sunshine = {
-      enable = true;
+      enable = false;
       autoStart = false;
       capSysAdmin = true;
       openFirewall = true;
