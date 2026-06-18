@@ -1,20 +1,19 @@
+# Impermanence: ephemeral btrfs root that is rolled back to a blank
+# snapshot on every boot, with /persist holding the state that survives.
 {
   config,
   lib,
   ...
 }:
-
-with lib;
-
 let
   cfg = config.modules.nixos.impermanence;
 in
 {
   options.modules.nixos.impermanence = {
-    enable = mkEnableOption "impermanence";
-
+    enable = lib.mkEnableOption "the ephemeral btrfs root (rollback on boot)";
   };
-  config = mkIf cfg.enable {
+
+  config = lib.mkIf cfg.enable {
     environment.persistence.main = {
       persistentStoragePath = "/persist";
       hideMounts = true;

@@ -1,24 +1,24 @@
+# Kernel: selects the kernel package (defaults to the Zen kernel).
 {
   config,
   lib,
   pkgs,
   ...
 }:
-
-with lib;
-
 let
   cfg = config.modules.nixos.kernel;
 in
 {
   options.modules.nixos.kernel = {
-    kernelPackages = mkOption {
+    enable = lib.mkEnableOption "managing the kernel package via this module";
+    kernelPackages = lib.mkOption {
       default = pkgs.linuxPackages_zen;
-      type = types.raw;
-      description = "kernel package to use.";
+      type = lib.types.raw;
+      description = "Kernel package set to use.";
     };
   };
-  config = {
+
+  config = lib.mkIf cfg.enable {
     boot = {
       inherit (cfg) kernelPackages;
     };

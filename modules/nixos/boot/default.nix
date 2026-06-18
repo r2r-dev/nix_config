@@ -1,3 +1,4 @@
+# Boot: quiet, themed systemd-boot setup with a Plymouth splash.
 {
   config,
   lib,
@@ -9,11 +10,9 @@ let
 in
 {
   options.modules.nixos.boot = {
-    enable = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
+    enable = lib.mkEnableOption "the quiet systemd-boot + Plymouth boot setup";
   };
+
   config = lib.mkIf cfg.enable {
     boot = {
       loader = {

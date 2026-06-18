@@ -1,3 +1,5 @@
+# GOW Wolf: Games-on-Whales "Wolf" game-streaming server running in Docker,
+# with optional NVIDIA GPU passthrough and driver-volume bootstrapping.
 {
   config,
   lib,

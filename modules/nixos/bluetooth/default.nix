@@ -1,3 +1,5 @@
+# Bluetooth: enable Bluetooth with Blueman, and persist pairing state on
+# impermanent hosts.
 {
   config,
   lib,
@@ -8,11 +10,9 @@ let
 in
 {
   options.modules.nixos.bluetooth = {
-    enable = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
+    enable = lib.mkEnableOption "Bluetooth support (with Blueman)";
   };
+
   config = lib.mkIf cfg.enable {
     # Enable Bluetooth
     hardware.bluetooth = {

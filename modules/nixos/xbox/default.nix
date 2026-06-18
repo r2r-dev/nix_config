@@ -1,30 +1,41 @@
+# Xbox: Xbox One / Elite 2 controller support (xpadneo + Bluetooth tweaks).
 {
+  config,
+  lib,
   pkgs,
   ...
 }:
-
+let
+  cfg = config.modules.nixos.xbox;
+in
 {
-  services.udev.packages = [
-    (pkgs.writeTextFile {
-      name = "xbox-one-elite-2-udev-rules";
-      text = ''KERNEL=="hidraw*", TAG+="uaccess"'';
-      destination = "/etc/udev/rules.d/60-xbox-elite-2-hid.rules";
-    })
-  ];
-  hardware.xpadneo.enable = true; # Enable the xpadneo driver for Xbox One wireless controllers
-  boot = {
-    kernelModules = [
-      "hid_microsoft" # Xbox One Elite 2 controller driver preferred by Steam
-    ];
+  options.modules.nixos.xbox = {
+    enable = lib.mkEnableOption "Xbox controller support";
   };
-  hardware.bluetooth.settings.General = {
-    experimental = true; # show battery
 
-    # https://www.reddit.com/r/NixOS/comments/1ch5d2p/comment/lkbabax/
-    # for pairing bluetooth controller
-    Privacy = "device";
-    JustWorksRepairing = "always";
-    Class = "0x000100";
-    FastConnectable = true;
+  config = lib.mkIf cfg.enable {
+    services.udev.packages = [
+      (pkgs.writeTextFile {
+        name = "xbox-one-elite-2-udev-rules";
+        text = ''KERNEL=="hidraw*", TAG+="uaccess"'';
+        destination = "/etc/udev/rules.d/60-xbox-elite-2-hid.rules";
+      })
+    ];
+    hardware.xpadneo.enable = true; # Enable the xpadneo driver for Xbox One wireless controllers
+    boot = {
+      kernelModules = [
+        "hid_microsoft" # Xbox One Elite 2 controller driver preferred by Steam
+      ];
+    };
+    hardware.bluetooth.settings.General = {
+      experimental = true; # show battery
+
+      # https://www.reddit.com/r/NixOS/comments/1ch5d2p/comment/lkbabax/
+      # for pairing bluetooth controller
+      Privacy = "device";
+      JustWorksRepairing = "always";
+      Class = "0x000100";
+      FastConnectable = true;
+    };
   };
 }

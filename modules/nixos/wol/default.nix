@@ -1,3 +1,5 @@
+# Wake-on-LAN: enable WoL on a given interface and keep it armed across
+# sleep via a systemd service.
 {
   config,
   pkgs,

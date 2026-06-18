@@ -1,18 +1,18 @@
+# Keyboard: keyd-based key remapping (remaps are currently commented out).
 {
   config,
   lib,
   ...
 }:
-with lib;
 let
   cfg = config.modules.nixos.keyboard;
 in
 {
-  options.modules.nixos.keyboard = with types; {
-    enable = mkEnableOption "Enable keyd";
+  options.modules.nixos.keyboard = {
+    enable = lib.mkEnableOption "keyd key remapping";
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.keyd = {
       enable = true;
       keyboards.default = {

@@ -1,31 +1,41 @@
+# RGB: OpenRGB hardware lighting control (with i2c access for the r2r user).
 {
+  config,
+  lib,
   pkgs,
   ...
 }:
-
+let
+  cfg = config.modules.nixos.rgb;
+in
 {
-  services.hardware.openrgb = {
-    motherboard = "amd";
-    enable = true;
-    package = pkgs.openrgb_git.overrideAttrs (
-      _: _: {
-        installPhase = ''
-          export LC_ALL=C.UTF-8
-          mkdir $out
-          mkdir -p $out/etc/systemd
-          make install
-        '';
-      }
-    );
+  options.modules.nixos.rgb = {
+    enable = lib.mkEnableOption "OpenRGB hardware lighting control";
   };
-  networking.firewall.allowedTCPPorts = [ 6742 ];
-  hardware.i2c.enable = true;
-  environment.systemPackages = with pkgs; [
-    i2c-tools # openrgb
-  ];
-  boot.kernelModules = [
-    "i2c-piix4" # secondary i2c sensor - for rgb?
-  ];
-  users.groups.i2c.members = [ "r2r" ]; # openrgb: create i2c group and add default user to it
 
+  config = lib.mkIf cfg.enable {
+    services.hardware.openrgb = {
+      motherboard = "amd";
+      enable = true;
+      package = pkgs.openrgb_git.overrideAttrs (
+        _: _: {
+          installPhase = ''
+            export LC_ALL=C.UTF-8
+            mkdir $out
+            mkdir -p $out/etc/systemd
+            make install
+          '';
+        }
+      );
+    };
+    networking.firewall.allowedTCPPorts = [ 6742 ];
+    hardware.i2c.enable = true;
+    environment.systemPackages = with pkgs; [
+      i2c-tools # openrgb
+    ];
+    boot.kernelModules = [
+      "i2c-piix4" # secondary i2c sensor - for rgb?
+    ];
+    users.groups.i2c.members = [ "r2r" ]; # openrgb: create i2c group and add default user to it
+  };
 }

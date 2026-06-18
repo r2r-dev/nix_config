@@ -2,25 +2,16 @@
   description = "My NixOS flake";
 
   inputs = {
-    proton-cachyos = {
-      url = "github:powerofthe69/proton-cachyos-nix";
+    # Core
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    # Home & secrets
+    home-manager = {
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-flatpak = {
-      url = "github:gmodena/nix-flatpak"; # unstable branch. Use github:gmodena/nix-flatpak/?ref=<tag> to pin releases.
-    };
-    chaotic = {
-      url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
-    };
-    nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
     };
     agenix = {
       url = "github:ryantm/agenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    lix-module = {
-      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.92.0-3.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     impermanence = {
@@ -28,20 +19,19 @@
       inputs.nixpkgs.follows = "";
       inputs.home-manager.follows = "";
     };
-    home-manager = {
-      url = "github:nix-community/home-manager";
+
+    # Packages & overlays
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    nur.url = "github:nix-community/NUR";
+    proton-cachyos = {
+      url = "github:powerofthe69/proton-cachyos-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nur = {
-      url = "github:nix-community/NUR";
-    };
-    fenix = {
-      url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixos-hardware = {
-      url = "github:NixOS/nixos-hardware/master";
-    };
+    nix-flatpak.url = "github:gmodena/nix-flatpak"; # unstable branch. Use github:gmodena/nix-flatpak/?ref=<tag> to pin releases.
+
+    # Hardware
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
     # Steamdeck related options
     jovian-nixos = {
       url = "github:Jovian-Experiments/Jovian-NixOS";
@@ -51,13 +41,8 @@
       url = "github:grantimatter/eden-flake";
       inputs.nixpkgs.follows = "nixpkgs"; # Do not override if using Cachix
     };
-    disko = {
-      url = "github:nix-community/disko/latest";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    ucodenix = {
-      url = "github:e-tho/ucodenix";
-    };
+
+    # Out-of-tree packages defined in this repo
     outoftree = {
       url = "path:./pkgs";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -81,77 +66,65 @@
       proton-cachyos,
       nur,
       ...
-    }@inputs:
+    }:
     let
       inherit (self) outputs;
+
+      system = "x86_64-linux";
+
       myOverlays = import ./overlays {
-        inherit outoftree;
-        system = "x86_64-linux";
+        inherit outoftree system;
       };
+
+      # Modules shared by every host.
+      commonModules = [
+        {
+          nixpkgs.overlays = [ myOverlays ];
+          nixpkgs.config.allowUnfree = true;
+          programs.eden.enable = true;
+        }
+        agenix.nixosModules.default
+        chaotic.nixosModules.default
+        jovian-nixos.nixosModules.default
+        eden.nixosModules.default
+        home-manager.nixosModules.home-manager
+        impermanence.nixosModules.impermanence
+        {
+          environment.systemPackages = [
+            agenix.packages.${system}.default
+          ];
+        }
+      ];
+
+      # Build a NixOS configuration for the host named `name`, adding any
+      # host-specific modules on top of the shared set.
+      mkSystem =
+        name: extraModules:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit
+              system
+              outoftree
+              outputs
+              ;
+          };
+          modules = commonModules ++ extraModules ++ [ ./machines/${name} ];
+        };
     in
     {
       nixosModules = import ./modules/nixos;
       homeManagerModules = import ./modules/home;
+
       nixosConfigurations = {
-        annata = nixpkgs.lib.nixosSystem rec {
-          system = "x86_64-linux";
-          specialArgs = {
-            inherit
-              inputs
-              system
-              outoftree
-              outputs
-              ;
-          };
-          modules = [
-            { nixpkgs.overlays = [ myOverlays ]; }
-            nixos-hardware.nixosModules.gpd-pocket-4
-            nix-flatpak.nixosModules.nix-flatpak
-            agenix.nixosModules.default
-            chaotic.nixosModules.default
-            jovian-nixos.nixosModules.default
-            inputs.eden.nixosModules.default
-            {
-              environment.systemPackages = [
-                agenix.packages.x86_64-linux.default
-              ];
-              imports = [
-                home-manager.nixosModules.home-manager
-              ];
-            }
-            impermanence.nixosModules.impermanence
-            ./machines/annata
-          ];
-        };
-        samsara = nixpkgs.lib.nixosSystem rec {
-          system = "x86_64-linux";
-          specialArgs = {
-            inherit
-              inputs
-              system
-              outoftree
-              outputs
-              ;
-          };
-          modules = [
-            { nixpkgs.overlays = [ myOverlays proton-cachyos.overlays.default ]; }
-            nur.modules.nixos.default
-            agenix.nixosModules.default
-            chaotic.nixosModules.default
-            jovian-nixos.nixosModules.default
-            inputs.eden.nixosModules.default
-            {
-              environment.systemPackages = [
-                agenix.packages.x86_64-linux.default
-              ];
-              imports = [
-                home-manager.nixosModules.home-manager
-              ];
-            }
-            impermanence.nixosModules.impermanence
-            ./machines/samsara
-          ];
-        };
+        annata = mkSystem "annata" [
+          nixos-hardware.nixosModules.gpd-pocket-4
+          nix-flatpak.nixosModules.nix-flatpak
+        ];
+        samsara = mkSystem "samsara" [
+          { nixpkgs.overlays = [ proton-cachyos.overlays.default ]; }
+          nur.modules.nixos.default
+        ];
       };
     };
 }

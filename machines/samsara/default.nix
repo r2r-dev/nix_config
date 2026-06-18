@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   outputs,
   ...
@@ -13,15 +12,20 @@
     boot
     desktop
     fans
+    ios
     kernel
+    locale
     network
     nix
+    no_suspend
     nvidia
     #prompter broken on 6.18.1-zen-dev
     rgb
+    secrets
     sound
     ssh
     steam
+    users
     xbox
     zerotier
     wol
@@ -50,7 +54,60 @@
       homeassistant = {
         enable = true;
       };
+      kernel = {
+        enable = true;
+      };
       fans = {
+        enable = true;
+        it87.enable = true;
+      };
+      ios = {
+        enable = true;
+      };
+      locale = {
+        enable = true;
+      };
+      no_suspend = {
+        enable = true;
+      };
+      nix = {
+        enable = true;
+      };
+      nvidia = {
+        enable = true;
+      };
+      rgb = {
+        enable = true;
+      };
+      secrets = {
+        enable = true;
+        sshHostKeyDir = "/persist/etc/ssh";
+      };
+      sound = {
+        enable = true;
+      };
+      ssh = {
+        enable = true;
+      };
+      steam = {
+        enable = true;
+        autoLogin = {
+          enable = true;
+        };
+        gamescopeSession = {
+          enable = true;
+          width = 3840;
+          height = 2160;
+        };
+      };
+      users = {
+        enable = true;
+        extraGroups = [
+          "wheel"
+          "input"
+        ];
+      };
+      xbox = {
         enable = true;
       };
       zerotier = {
@@ -65,206 +122,32 @@
     };
   };
 
-  programs.eden = {
-    enable = true;
-  };
-
-  systemd.sleep.settings.Sleep = {
-    AllowSuspend = false;
-    AllowHibernation = false;
-    AllowHybridSleep = false;
-    AllowSuspendThenHibernate = false;
-  };
-
   virtualisation.docker.storageDriver = "btrfs";
-
-  programs.steam.gamescopeSession = {
-    enable = true; # Integrates with programs.steam
-    args = [
-      "-W 3840"
-      "-H 2160"
-      "-w 3840"
-      "-h 2160"
-      "--fullscreen"
-      "--steam"
-      "-r 120"
-      "--xwayland-count 2"
-      "--adaptive-sync"
-      "--hdr-enabled"
-      "--hdr-itm-enabled"
-      "--mangoapp"
-    ];
-    steamArgs = [
-      "-pipewire-dmabuf"
-      "-gamepadui"
-      "-steamos3"
-    ];
-  };
-
-  services.getty.autologinUser = "r2r";
-  services.displayManager = {
-    autoLogin = {
-      enable = true;
-      user = "r2r";
-    };
-    defaultSession = pkgs.lib.mkForce "steam";
-  };
-
-  age = {
-    identityPaths = [
-      "/persist/etc/ssh/ssh_host_ed25519_key"
-      "/persist/etc/ssh/ssh_host_rsa_key"
-    ];
-    secrets = {
-      "r2r.passwd".file = ../../secrets/r2r.passwd.age;
-    };
-  };
 
   hardware = {
     enableAllFirmware = true; # ?rgb?
-  };
-
-  time.timeZone = "Europe/Warsaw";
-
-  # enable ios tethering
-  services.usbmuxd = {
-    enable = true;
-    package = pkgs.usbmuxd2;
+    # Enable OpenGL
+    graphics = {
+      enable32Bit = true;
+      enable = true;
+    };
   };
 
   environment.systemPackages = with pkgs; [
     nur.repos.xddxdd.uncategorized.vk-hdr-layer
-    libimobiledevice
   ];
-
-  # Enable OpenGL
-  hardware.graphics = {
-    enable32Bit = true;
-    enable = true;
-  };
-
-  users = {
-    mutableUsers = false;
-    users = {
-      r2r = {
-        isNormalUser = true;
-        hashedPasswordFile = config.age.secrets."r2r.passwd".path;
-        extraGroups = [
-          "wheel"
-          "input"
-        ]; # Enable ‘sudo’ for the user.
-      };
-    };
-  };
 
   home-manager.users.r2r =
     { pkgs, ... }:
     {
-      nixpkgs = {
-        config = {
-          allowUnfree = true;
-          allowUnfreePredicate = _: true;
-        };
-      };
-      nix = {
-        extraOptions = ''
-          experimental-features = nix-command flakes
-        '';
-      };
-      home.persistence."/persist" = {
-        directories = [
-          "Downloads"
-          "Music"
-          "Pictures"
-          "Documents"
-          "Videos"
-          "Projects"
-          "Games"
-          ".local/share/eden"
-          ".config/eden"
-          ".gnupg"
-          ".ssh"
-          ".nixops"
-          ".local/share/keyrings"
-          ".local/state/wireplumber" # audio settings
-          ".local/share/direnv"
-          ".local/share/bookeeper" # bg3 mod manager
-          {
-            directory = ".steam";
-          }
-          {
-            directory = ".local/share/Steam";
-          }
-
-          # XDG config home directories.
-          ".config/discord" # Discord config/local state.
-          #".config/Signal" # Signal config/local state.
-          # XXX: Is this really necessary to persist?
-          ".cache/mozilla" # Firefox local cache.
-          ".mozilla" # Firefox config/local state.
-        ];
-        files = [
-          ".config/coderv2/session"
-          ".config/coderv2/url"
-          ".config/OpenRGB/OpenRGB.json"
-          ".config/monitors.xml"
-          "fs-diff.sh"
-          ".config/baloofilerc"
-          #".config/dconf/user"
-          ".config/gtk-3.0/colors.css"
-          #".config/gtk-3.0/gtk.css"
-          ".config/gtk-3.0/settings.ini"
-          ".config/gtk-4.0/colors.css"
-          #".config/gtk-4.0/gtk.css"
-          ".config/gtk-4.0/settings.ini"
-          ".config/gtkrc"
-          ".config/gtkrc-2.0"
-          ".config/kactivitymanagerdrc"
-          ".config/kactivitymanagerd-statsrc"
-          ".config/kconf_updaterc"
-          ".config/kded5rc"
-          ".config/kdedefaults/kcminputrc"
-          ".config/kdedefaults/kdeglobals"
-          ".config/kdedefaults/ksplashrc"
-          ".config/kdedefaults/kwinrc"
-          ".config/kdedefaults/package"
-          ".config/kdedefaults/plasmarc"
-          ".config/kdeglobals"
-          ".config/kde.org/UserFeedback.org.kde.plasmashell.conf"
-          ".config/kglobalshortcutsrc"
-          ".config/konsolerc"
-          ".config/kcminputrc" # touchscreen config
-          ".config/ktimezonedrc"
-          ".config/kwinoutputconfig.json"
-          ".config/kwinrc"
-          ".config/plasma-localerc"
-          ".config/plasma-org.kde.plasma.desktop-appletsrc"
-          ".config/plasmashellrc"
-          ".config/powermanagementprofilesrc"
-          ".config/pulse/cookie"
-          ".config/systemsettingsrc"
-          ".config/Trolltech.conf"
-          #".config/user-dirs.dirs"
-          ".config/user-dirs.locale"
-          #".config/xsettingsd/xsettingsd.conf"
-        ];
-      };
-      home.packages = with pkgs; [
-        python3
-        git
-        keepassxc
-        nixfmt-rfc-style
-        sshfs # TODO ssh module
+      imports = [
+        outputs.homeManagerModules.r2r
+        ./persistence.nix
       ];
-      programs = {
-        bash.enable = true;
-        firefox.enable = true;
-        vim.enable = true;
-      };
-
-      # The state version is required and should stay at the version you
-      # originally installed.
-      home.stateVersion = "24.11";
+      home.packages = with pkgs; [
+        git
+        nixfmt-rfc-style
+      ];
     };
 
   system.stateVersion = "24.11";

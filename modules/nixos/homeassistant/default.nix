@@ -1,3 +1,5 @@
+# Home Assistant: a dedicated homeassistant user allowed to power the host
+# off/reboot over SSH (for use as a Home Assistant switch).
 {
   config,
   lib,
@@ -8,11 +10,9 @@ let
 in
 {
   options.modules.nixos.homeassistant = {
-    enable = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
+    enable = lib.mkEnableOption "the Home Assistant power-control user";
   };
+
   config = lib.mkIf cfg.enable {
     users.groups.homeassistant = { };
     users.users.homeassistant = {

@@ -1,3 +1,5 @@
+# ZeroTier: join the puqu and/or warp ZeroTier networks, with matching
+# dnsmasq split-DNS entries and persisted identity on impermanent hosts.
 {
   config,
   lib,
@@ -8,15 +10,10 @@ let
 in
 {
   options.modules.nixos.zerotier = {
-    warp.enable = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
-    puqu.enable = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
+    warp.enable = lib.mkEnableOption "the warp.r2r.sh ZeroTier network";
+    puqu.enable = lib.mkEnableOption "the szamszur.cloud/puqu.io ZeroTier network";
   };
+
   config = lib.mkIf (cfg.warp.enable || cfg.puqu.enable) {
     environment.persistence.main =
       lib.mkIf config.modules.nixos.impermanence.enable

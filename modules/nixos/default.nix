@@ -1,22 +1,16 @@
-{
-  bluetooth = import ./bluetooth;
-  boot = import ./boot;
-  desktop = import ./desktop;
-  fans = import ./fans;
-  gow_wolf = import ./gow_wolf;
-  homeassistant = import ./homeassistant;
-  impermanence = import ./impermanence;
-  kernel = import ./kernel;
-  keyboard = import ./keyboard;
-  network = import ./network;
-  nix = import ./nix;
-  nvidia = import ./nvidia;
-  prompter = import ./prompter;
-  rgb = import ./rgb;
-  sound = import ./sound;
-  ssh = import ./ssh;
-  steam = import ./steam;
-  wol = import ./wol;
-  xbox = import ./xbox;
-  zerotier = import ./zerotier;
-}
+# Auto-import every module directory in this folder.
+# Each subdirectory is expected to contain a `default.nix`, and is exposed
+# under `outputs.nixosModules.<dirname>`. Adding a new module is just a
+# matter of creating the directory — no need to edit this file.
+let
+  entries = builtins.readDir ./.;
+  moduleNames = builtins.filter (name: entries.${name} == "directory") (
+    builtins.attrNames entries
+  );
+in
+builtins.listToAttrs (
+  map (name: {
+    inherit name;
+    value = import (./. + "/${name}");
+  }) moduleNames
+)

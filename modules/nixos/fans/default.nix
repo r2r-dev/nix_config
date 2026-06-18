@@ -1,3 +1,5 @@
+# Fans: CoolerControl userspace fan control, optionally with the it87
+# temperature sensor kernel module for desktop boards.
 {
   config,
   lib,
@@ -10,13 +12,11 @@ let
 in
 {
   options.modules.nixos.fans = {
-    enable = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
+    enable = lib.mkEnableOption "CoolerControl-based fan control";
+    it87.enable = lib.mkEnableOption "the it87 temperature sensor kernel module (desktop boards)";
   };
   config = lib.mkIf cfg.enable {
-    boot = {
+    boot = lib.mkIf cfg.it87.enable {
       kernelParams = [
         "acpi_enforce_resources=lax" # proper temp - fan loop
       ];
