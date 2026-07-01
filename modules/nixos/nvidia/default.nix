@@ -38,6 +38,10 @@ in
       # https://download.nvidia.com/XFree86/Linux-x86_64/565.57.01/README/kernel_open.html
       open = true; # not with 6.15 patch
 
+      # Keep the driver resident so the GPU does not re-initialise between
+      # runs, trimming launch latency/stutter.
+      nvidiaPersistenced = true;
+
       #package = config.boot.kernelPackages.nvidiaPackages.new_feature;
       # pin driver version https://www.nvidia.com/en-us/drivers/unix/
       # https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/nvidia-x11/default.nix

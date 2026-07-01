@@ -19,6 +19,7 @@
     nix
     no_suspend
     nvidia
+    performance
     #prompter broken on 6.18.1-zen-dev
     rgb
     secrets
@@ -76,6 +77,10 @@
       nvidia = {
         enable = true;
       };
+      performance = {
+        enable = true;
+        disableMitigations = true;
+      };
       rgb = {
         enable = true;
       };
@@ -98,6 +103,7 @@
           enable = true;
           width = 3840;
           height = 2160;
+          refreshRate = 165;
         };
       };
       users = {
@@ -124,8 +130,11 @@
 
   virtualisation.docker.storageDriver = "btrfs";
 
+  boot.kernelParams = [ "amd_pstate=active" ];
+
   hardware = {
     enableAllFirmware = true; # ?rgb?
+    cpu.amd.updateMicrocode = true;
     # Enable OpenGL
     graphics = {
       enable32Bit = true;
