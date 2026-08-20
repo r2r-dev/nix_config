@@ -18,6 +18,7 @@
     keepassxc
     python3
     sshfs # TODO ssh module
+    eden
   ];
   programs = {
     bash.enable = true;

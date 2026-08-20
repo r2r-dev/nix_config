@@ -37,10 +37,6 @@
       url = "github:Jovian-Experiments/Jovian-NixOS";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    eden = {
-      url = "github:grantimatter/eden-flake";
-      inputs.nixpkgs.follows = "nixpkgs"; # Do not override if using Cachix
-    };
 
     # Out-of-tree packages defined in this repo
     outoftree = {
@@ -59,16 +55,16 @@
       nix-flatpak,
       nixos-hardware,
       jovian-nixos,
-      eden,
       home-manager,
       impermanence,
       outoftree,
       proton-cachyos,
       nur,
       ...
-    }:
+    }@inputs:
     let
       inherit (self) outputs;
+      inherit inputs;
 
       system = "x86_64-linux";
 
@@ -81,12 +77,10 @@
         {
           nixpkgs.overlays = [ myOverlays ];
           nixpkgs.config.allowUnfree = true;
-          programs.eden.enable = true;
         }
         agenix.nixosModules.default
         chaotic.nixosModules.default
         jovian-nixos.nixosModules.default
-        eden.nixosModules.default
         home-manager.nixosModules.home-manager
         impermanence.nixosModules.impermanence
         {
@@ -107,6 +101,7 @@
               system
               outoftree
               outputs
+              inputs
               ;
           };
           modules = commonModules ++ extraModules ++ [ ./machines/${name} ];
