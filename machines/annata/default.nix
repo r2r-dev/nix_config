@@ -146,6 +146,9 @@
     maliit-framework
     maliit-keyboard
     vim
+    winetricks
+    wineWow64Packages.stable
+    wine64
   ];
 
   # This value determines the NixOS release from which the default
