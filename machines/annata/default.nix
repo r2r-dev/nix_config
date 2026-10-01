@@ -149,6 +149,8 @@
     winetricks
     wineWow64Packages.stable
     wine64
+    waypipe
+    xwayland-satellite
   ];
 
   # This value determines the NixOS release from which the default
