@@ -60,15 +60,14 @@
         enable = true;
         disableMitigations = true;
       };
-      steam = {
+      steam.enable = true;
+      gamemode.enable = true;
+      session = {
         enable = true;
         autoLogin.enable = true;
-        gamescopeSession = {
-          enable = true;
-          width = 3840;
-          height = 2160;
-          refreshRate = 165;
-        };
+        width = 3840;
+        height = 2160;
+        refreshRate = 165;
       };
     };
 

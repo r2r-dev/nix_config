@@ -46,9 +46,10 @@
       };
     };
 
-    gaming.steam = {
-      enable = true;
-      gamescopeSession = {
+    gaming = {
+      steam.enable = true;
+      gamemode.enable = true;
+      session = {
         enable = true;
         width = 2560;
         height = 1600;

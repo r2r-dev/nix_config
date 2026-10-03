@@ -1,9 +1,5 @@
-# Steam: Steam with gamescope, gamemode and gaming resource limits.
-# Optionally boots straight into a gamescope Steam session.
-#
-# GameMode's privileged helpers are authorised by the polkit action and rule
-# shipped in the gamemode package (members of the `gamemode` group), so no
-# sudo rules or copied policy files are needed here.
+# Steam: the Steam client (with Proton-CachyOS and protontricks), gamescope,
+# and the gaming tools installed for the primary user.
 {
   config,
   lib,
@@ -12,85 +8,35 @@
 }:
 let
   cfg = config.my.gaming.steam;
-  gs = cfg.gamescopeSession;
-  auto = cfg.autoLogin;
 in
 {
   options.my.gaming.steam = {
-    enable = lib.mkEnableOption "Steam with gamescope and gamemode";
-    autoLogin = {
-      enable = lib.mkEnableOption "automatic login straight into the Steam session";
-      user = lib.mkOption {
-        type = lib.types.str;
-        default = config.my.user.name;
-        defaultText = lib.literalExpression "config.my.user.name";
-        description = "User to automatically log in as.";
-      };
-    };
-    gamescopeSession = {
-      enable = lib.mkEnableOption "the gamescope Steam session";
-      width = lib.mkOption {
-        type = lib.types.int;
-        default = 1920;
-        description = "Horizontal output resolution for the gamescope session.";
-      };
-      height = lib.mkOption {
-        type = lib.types.int;
-        default = 1080;
-        description = "Vertical output resolution for the gamescope session.";
-      };
-      refreshRate = lib.mkOption {
-        type = lib.types.int;
-        default = 120;
-        description = "Refresh rate (Hz) for the gamescope session.";
-      };
-    };
+    enable = lib.mkEnableOption "Steam with gamescope";
   };
 
   config = lib.mkIf cfg.enable {
-    users.users.${config.my.user.name} = {
-      extraGroups = [ "gamemode" ];
-      packages = with pkgs; [
-        bottles
-        gamescope
-        gamescope-wsi
-        mangohud
-        moonlight-qt
-        steamtinkerlaunch
-        #lutris # blocked by https://github.com/NixOS/nixpkgs/pull/454074
-        vulkan-tools
+    users.users.${config.my.user.name}.packages = with pkgs; [
+      bottles
+      gamescope
+      gamescope-wsi
+      mangohud
+      moonlight-qt
+      steamtinkerlaunch
+      #lutris # blocked by https://github.com/NixOS/nixpkgs/pull/454074
+      vulkan-tools
+    ];
+
+    # https://github.com/NixOS/nixpkgs/issues/351516
+    services.ananicy = {
+      enable = true;
+      package = pkgs.ananicy-cpp;
+      rulesProvider = pkgs.ananicy-cpp;
+      extraRules = [
+        {
+          "name" = "gamescope";
+          "nice" = -20;
+        }
       ];
-    };
-
-    services = {
-      getty.autologinUser = lib.mkIf auto.enable auto.user;
-      displayManager = lib.mkIf auto.enable {
-        autoLogin = {
-          enable = true;
-          user = auto.user;
-        };
-        defaultSession = lib.mkForce "steam";
-      };
-
-      sunshine = {
-        enable = false;
-        autoStart = false;
-        capSysAdmin = true;
-        openFirewall = true;
-      };
-
-      ananicy = {
-        # https://github.com/NixOS/nixpkgs/issues/351516
-        enable = true;
-        package = pkgs.ananicy-cpp;
-        rulesProvider = pkgs.ananicy-cpp;
-        extraRules = [
-          {
-            "name" = "gamescope";
-            "nice" = -20;
-          }
-        ];
-      };
     };
 
     programs = {
@@ -98,39 +44,9 @@ in
         enable = true;
         capSysNice = false; # https://github.com/NixOS/nixpkgs/issues/523427
       };
-      gamemode = {
-        enable = true;
-        settings = {
-          general = {
-            renice = 10;
-          };
-        };
-      };
       steam = {
         enable = true;
         protontricks.enable = true;
-        gamescopeSession = lib.mkIf gs.enable {
-          enable = true; # Integrates with programs.steam
-          args = [
-            "-W ${toString gs.width}"
-            "-H ${toString gs.height}"
-            "-w ${toString gs.width}"
-            "-h ${toString gs.height}"
-            "--fullscreen"
-            "--steam"
-            "-r ${toString gs.refreshRate}"
-            "--xwayland-count 2"
-            "--adaptive-sync"
-            "--hdr-enabled"
-            "--hdr-itm-enabled"
-            "--mangoapp"
-          ];
-          steamArgs = [
-            "-pipewire-dmabuf"
-            "-gamepadui"
-            "-steamos3"
-          ];
-        };
         extraPackages =
           with pkgs;
           [
@@ -165,53 +81,7 @@ in
       java.enable = true;
     };
 
-    boot = {
-      kernel.sysctl = {
-        # SteamOS/Fedora default, can help with performance.
-        "vm.max_map_count" = 2147483642;
-      };
-
-    };
-
-    services.udev.extraRules = ''
-      KERNEL=="cpu_dma_latency", GROUP="gamemode"
-    '';
-    security = {
-      pam = {
-        # Higher resource limits. Used by Lutris/Wine.
-        loginLimits = [
-          {
-            domain = "@gamemode";
-            item = "nofile";
-            type = "soft";
-            value = "1048576";
-          }
-          {
-            domain = "@gamemode";
-            item = "nofile";
-            type = "hard";
-            value = "1048576";
-          }
-          {
-            domain = "@gamemode";
-            type = "-";
-            item = "rtprio";
-            value = 98;
-          }
-          {
-            domain = "@gamemode";
-            type = "-";
-            item = "memlock";
-            value = "unlimited";
-          }
-          {
-            domain = "@gamemode";
-            type = "-";
-            item = "nice";
-            value = -11;
-          }
-        ];
-      };
-    };
+    # SteamOS/Fedora default, can help with performance.
+    boot.kernel.sysctl."vm.max_map_count" = 2147483642;
   };
 }
