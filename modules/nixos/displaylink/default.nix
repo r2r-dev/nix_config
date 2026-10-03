@@ -1,9 +1,12 @@
-# DisplayLink support (evdi kernel module + DisplayLinkManager
-# service) for external USB display adapters.
+# DisplayLink: USB display adapters, using nixpkgs' DisplayLink support
+# (evdi kernel module, udev rules and the DisplayLinkManager `dlm` service,
+# started when an adapter is plugged in, with suspend/resume hooks).
+#
+# The displaylink package needs its driver archive added to the store by
+# hand once (see `nix-build '<nixpkgs>' -A displaylink` for instructions).
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -15,43 +18,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.variables = {
-      # if kde plasma
-      KWIN_DRM_PREFER_COLOR_DEPTH = "24";
-    };
-    environment.systemPackages = with pkgs; [
-      # if kde plasma
-      displaylink
+    services.xserver.videoDrivers = [
+      "displaylink"
+      "modesetting"
     ];
-    # --- THIS IS THE CRUCIAL PART FOR ENABLING THE SERVICE ---
-    systemd.services.displaylink-server = {
-      enable = true;
-      # Ensure it starts after udev has done its work
-      requires = [ "systemd-udevd.service" ];
-      after = [ "systemd-udevd.service" ];
-      wantedBy = [ "multi-user.target" ]; # Start at boot
-      # *** THIS IS THE CRITICAL 'serviceConfig' BLOCK ***
-      serviceConfig = {
-        Type = "simple"; # Or "forking" if it forks (simple is common for daemons)
-        # The ExecStart path points to the DisplayLinkManager binary provided by the package
-        ExecStart = "${pkgs.displaylink}/bin/DisplayLinkManager";
-        # User and Group to run the service as (root is common for this type of daemon)
-        User = "root";
-        Group = "root";
-        # Environment variables that the service itself might need
-        # Environment = [ "DISPLAY=:0" ]; # Might be needed in some cases, but generally not for this
-        Restart = "on-failure";
-        RestartSec = 5; # Wait 5 seconds before restarting
-      };
-    };
-    boot = {
-      extraModulePackages = [ config.boot.kernelPackages.evdi ];
-      initrd = {
-        # List of modules that are always loaded by the initrd.
-        kernelModules = [
-          "evdi"
-        ];
-      };
+
+    # KWin defaults to 30-bit colour, which evdi outputs can't do.
+    environment.variables = lib.mkIf config.services.desktopManager.plasma6.enable {
+      KWIN_DRM_PREFER_COLOR_DEPTH = "24";
     };
   };
 }
