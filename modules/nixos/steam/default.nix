@@ -1,5 +1,9 @@
-# Steam: Steam with gamescope, gamemode, and the GameMode polkit/limits
-# plumbing. Optionally boots straight into a gamescope Steam session.
+# Steam: Steam with gamescope, gamemode and gaming resource limits.
+# Optionally boots straight into a gamescope Steam session.
+#
+# GameMode's privileged helpers are authorised by the polkit action and rule
+# shipped in the gamemode package (members of the `gamemode` group), so no
+# sudo rules or copied policy files are needed here.
 {
   config,
   lib,
@@ -47,14 +51,11 @@ in
       extraGroups = [ "gamemode" ];
       packages = with pkgs; [
         bottles
-        gamemode
         gamescope
         gamescope-wsi
         mangohud
         moonlight-qt
         steamtinkerlaunch
-        gamescope
-        gamescope-wsi
         #lutris # blocked by https://github.com/NixOS/nixpkgs/pull/454074
         vulkan-tools
       ];
@@ -175,50 +176,6 @@ in
       KERNEL=="cpu_dma_latency", GROUP="gamemode"
     '';
     security = {
-      sudo = {
-        extraRules = [
-          {
-            groups = [
-              "gamemode"
-            ];
-            commands = [
-              {
-                command = "${pkgs.gamemode}/bin/gamemoderun";
-                options = [ "NOPASSWD" ];
-              }
-              {
-                command = "${pkgs.gamemode}/libexec/procsysctl";
-                options = [ "NOPASSWD" ];
-              }
-              {
-                command = "${pkgs.gamemode}/libexec/cpugovctl";
-                options = [ "NOPASSWD" ];
-              }
-              {
-                command = "${pkgs.gamemode}/libexec/gpuclockctl";
-                options = [ "NOPASSWD" ];
-              }
-              {
-                command = "^/nix/store/.*/bin/gamemoderun$";
-                options = [ "NOPASSWD" ];
-              }
-              {
-                command = "^/nix/store/.*/libexec/procsysctl$";
-                options = [ "NOPASSWD" ];
-              }
-              {
-                command = "^/nix/store/.*/libexec/cpugovctl$";
-                options = [ "NOPASSWD" ];
-              }
-              {
-                command = "^/nix/store/.*/libexec/gpuclockctl$";
-                options = [ "NOPASSWD" ];
-              }
-            ];
-          }
-        ];
-      };
-
       pam = {
         # Higher resource limits. Used by Lutris/Wine.
         loginLimits = [
@@ -255,82 +212,5 @@ in
         ];
       };
     };
-    security.polkit.extraConfig = ''
-      polkit.addRule(function (action, subject) {
-        if ((action.id == "com.feralinteractive.GameMode.governor-helper" ||
-          action.id == "com.feralinteractive.GameMode.gpu-helper" ||
-          action.id == "com.feralinteractive.GameMode.cpu-helper" ||
-          action.id == "com.feralinteractive.GameMode.procsys-helper") &&
-          subject.isInGroup("gamemode"))
-        {
-          return polkit.Result.YES;
-        }
-      });
-    '';
-
-    environment.etc."polkit-1/actions/com.feralinteractive.GameMode.policy".text =
-      ''
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE policyconfig PUBLIC
-         "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
-         "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
-        <policyconfig>
-
-          <!--
-            Copyright (c) 2017-2019, Feral Interactive
-            All rights reserved.
-          -->
-
-          <vendor>Feral GameMode Activation</vendor>
-          <vendor_url>http://www.feralinteractive.com</vendor_url>
-
-          <action id="com.feralinteractive.GameMode.governor-helper">
-            <description>Modify the CPU governor</description>
-            <message>Authentication is required to modify the CPU governor</message>
-            <defaults>
-              <allow_any>no</allow_any>
-              <allow_inactive>no</allow_inactive>
-              <allow_active>no</allow_active>
-            </defaults>
-            <annotate key="org.freedesktop.policykit.exec.path">${pkgs.gamemode}/libexec/cpugovctl</annotate>
-          </action>
-
-          <action id="com.feralinteractive.GameMode.gpu-helper">
-            <description>Modify the GPU clock states</description>
-            <message>Authentication is required to modify the GPU clock states</message>
-            <defaults>
-              <allow_any>no</allow_any>
-              <allow_inactive>no</allow_inactive>
-              <allow_active>no</allow_active>
-            </defaults>
-            <annotate key="org.freedesktop.policykit.exec.path">${pkgs.gamemode}/libexec/gpuclockctl</annotate>
-            <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
-          </action>
-
-          <action id="com.feralinteractive.GameMode.cpu-helper">
-            <description>Modify the CPU core states</description>
-            <message>Authentication is required to modify the CPU core states</message>
-            <defaults>
-              <allow_any>no</allow_any>
-              <allow_inactive>no</allow_inactive>
-              <allow_active>no</allow_active>
-            </defaults>
-            <annotate key="org.freedesktop.policykit.exec.path">${pkgs.gamemode}/libexec/cpucorectl</annotate>
-            <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
-          </action>
-
-          <action id="com.feralinteractive.GameMode.procsys-helper">
-            <description>Modify the /proc/sys values</description>
-            <message>Authentication is required to modify the /proc/sys/ values</message>
-            <defaults>
-              <allow_any>no</allow_any>
-              <allow_inactive>no</allow_inactive>
-              <allow_active>no</allow_active>
-            </defaults>
-            <annotate key="org.freedesktop.policykit.exec.path">${pkgs.gamemode}/libexec/procsysctl</annotate>
-            <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
-          </action>
-        </policyconfig>
-      '';
   };
 }
