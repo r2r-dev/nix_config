@@ -1,8 +1,5 @@
 # GPD Pocket 4 specific hardware quirks.
 { pkgs, ... }:
-let
-  libfprint-focaltech = pkgs.callPackage ./fingerprint.nix { };
-in
 {
   hardware = {
     ledger.enable = true;
@@ -21,7 +18,7 @@ in
   services.fprintd = {
     enable = false;
     package = pkgs.fprintd.override {
-      libfprint = libfprint-focaltech;
+      libfprint = pkgs.libfprint-focaltech;
     };
   };
 }

@@ -37,17 +37,11 @@
     # Hardware
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    # Steamdeck related options
+    # Steam Deck bits. Not only options: its module overlays steam (steam-jupiter +
+    # steamos-session-select), gamescope and mangohud, which the gamescope session uses.
     jovian-nixos = {
       url = "github:Jovian-Experiments/Jovian-NixOS";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Out-of-tree packages defined in this repo
-    outoftree = {
-      url = "path:./pkgs";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.chaotic.follows = "chaotic";
     };
   };
 
@@ -60,7 +54,6 @@
       home-manager,
       impermanence,
       jovian-nixos,
-      outoftree,
       ...
     }@inputs:
     let
@@ -72,7 +65,7 @@
         (
           { pkgs, ... }:
           {
-            nixpkgs.overlays = [ (import ./overlays { inherit outoftree system; }) ];
+            nixpkgs.overlays = [ self.overlays.default ];
             nixpkgs.config.allowUnfree = true;
             environment.systemPackages = [
               agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
@@ -81,7 +74,7 @@
         )
         agenix.nixosModules.default
         chaotic.nixosModules.default
-        jovian-nixos.nixosModules.default
+        jovian-nixos.nixosModules.default # see input comment: overlay is in use
         home-manager.nixosModules.home-manager
         impermanence.nixosModules.impermanence
         self.nixosModules.default
@@ -92,7 +85,7 @@
         name: path:
         lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs outoftree; };
+          specialArgs = { inherit inputs; };
           modules = commonModules ++ [
             { networking.hostName = name; }
             path
@@ -102,6 +95,20 @@
     {
       nixosModules = import ./modules/nixos;
       homeManagerModules = import ./modules/home;
+      overlays.default = import ./overlays;
+
+      packages.${system} =
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        in
+        import ./pkgs pkgs
+        // {
+          # Built against the default kernel here; hosts build it against their own.
+          it87 = pkgs.linuxPackages_zen.callPackage ./pkgs/it87 { };
+        };
 
       nixosConfigurations = lib.mapAttrs mkHost (import ./lib/import-dir.nix ./hosts);
 

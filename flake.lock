@@ -310,25 +310,6 @@
         "type": "github"
       }
     },
-    "outoftree": {
-      "inputs": {
-        "chaotic": [
-          "chaotic"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "path": "./pkgs",
-        "type": "path"
-      },
-      "original": {
-        "path": "./pkgs",
-        "type": "path"
-      },
-      "parent": []
-    },
     "proton-cachyos": {
       "inputs": {
         "nixpkgs": [
@@ -361,7 +342,6 @@
         "nixpkgs": "nixpkgs_3",
         "noctalia": "noctalia",
         "nur": "nur",
-        "outoftree": "outoftree",
         "proton-cachyos": "proton-cachyos"
       }
     }
