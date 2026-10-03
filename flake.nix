@@ -5,6 +5,11 @@
     # Core
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Home & secrets
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -60,6 +65,7 @@
       outoftree,
       proton-cachyos,
       nur,
+      noctalia,
       ...
     }@inputs:
     let

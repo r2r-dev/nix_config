@@ -1,6 +1,7 @@
 {
   pkgs,
   outputs,
+  inputs,
   ...
 }:
 {
@@ -15,6 +16,7 @@
     fans
     flatpak
     nix
+    noctalia
     kernel
     keyboard
     locale
@@ -45,6 +47,9 @@
         enable = true;
       };
       desktop = {
+        enable = false;
+      };
+      noctalia = {
         enable = true;
       };
       fans = {
@@ -122,8 +127,17 @@
   home-manager.users.r2r =
     { pkgs, ... }:
     {
-      imports = [ outputs.homeManagerModules.r2r ];
+      imports = [
+        inputs.noctalia.homeModules.default
+        outputs.homeManagerModules.r2r
+      ];
       home.packages = with pkgs; [
+        (writeShellScriptBin "autorotate" ''
+          ${pkgs.iio-sensor-proxy}/bin/monitor-sensor 2>/dev/null | while read -r line; do
+            o=$(echo "$line" | grep -oE 'normal|bottom-up|left-up|right-up' | head -1)
+            [ -n "$o" ] && hyprctl eval "laptop_orientation(\"$o\")" >/dev/null
+          done
+        '')
         discord
         signal-desktop
         moonlight-qt
@@ -133,13 +147,33 @@
         sshx # TODO ssh module
         plasticity
         coder
+        wvkbd # onscreen keyboard
       ];
+
+      home.pointerCursor = {
+        enable = true;
+        package = pkgs.graphite-cursors;
+        name = "graphite-light";
+        size = 24;
+        gtk.enable = true; # GTK apps
+        x11.enable = true; # XWayland apps
+        hyprcursor.enable = true; # Hyprland
+      };
     };
+
+  services.displayManager.noctalia-greeter = {
+    passwordlessSyncUsers = [ "r2r" ];
+    settings = {
+      appearance.hide_logo = true;
+      output.transforms = "eDP-1:270";
+    };
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     flatpak
+    kitty
     git
     gnome-software
     kubectl
