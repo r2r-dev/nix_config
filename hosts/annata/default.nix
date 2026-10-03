@@ -10,8 +10,6 @@
     inputs.nix-flatpak.nixosModules.nix-flatpak
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ./hardware.nix
-    ./audio.nix
   ];
 
   my = {
@@ -30,6 +28,7 @@
 
     hardware = {
       gpu = "amd";
+      gpdPocket4.enable = true;
       bluetooth.enable = true;
       displaylink.enable = true;
       fans.enable = true;
@@ -60,6 +59,7 @@
   };
 
   programs.kdeconnect.enable = true;
+  hardware.ledger.enable = true;
 
   home-manager.users.${config.my.user.name} =
     { pkgs, ... }:
@@ -69,12 +69,6 @@
         inputs.self.homeManagerModules.r2r
       ];
       home.packages = with pkgs; [
-        (writeShellScriptBin "autorotate" ''
-          ${pkgs.iio-sensor-proxy}/bin/monitor-sensor 2>/dev/null | while read -r line; do
-            o=$(echo "$line" | grep -oE 'normal|bottom-up|left-up|right-up' | head -1)
-            [ -n "$o" ] && hyprctl eval "laptop_orientation(\"$o\")" >/dev/null
-          done
-        '')
         discord
         signal-desktop
         nixfmt
@@ -83,7 +77,6 @@
         sshx # TODO ssh module
         plasticity
         coder
-        wvkbd # onscreen keyboard
       ];
 
       home.pointerCursor = {
@@ -101,7 +94,6 @@
     passwordlessSyncUsers = [ config.my.user.name ];
     settings = {
       appearance.hide_logo = true;
-      output.transforms = "eDP-1:270";
     };
   };
 
@@ -112,8 +104,6 @@
     git
     gnome-software
     kubectl
-    maliit-framework
-    maliit-keyboard
     vim
     winetricks
     wineWow64Packages.stable
