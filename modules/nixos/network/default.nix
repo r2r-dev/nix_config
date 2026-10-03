@@ -14,7 +14,7 @@ in
     dnsmasq = lib.mkEnableOption "the dnsmasq local resolver";
   };
   config = lib.mkIf cfg.enable {
-    environment.persistence.main = lib.mkIf config.my.impermanence.enable {
+    my.persist = {
       directories = [
         "/etc/NetworkManager/system-connections"
       ];

@@ -20,7 +20,7 @@ in
       powerOnBoot = true;
     };
     services.blueman.enable = true;
-    environment.persistence.main = lib.mkIf config.my.impermanence.enable {
+    my.persist = {
       directories = [
         "/var/lib/bluetooth"
       ];

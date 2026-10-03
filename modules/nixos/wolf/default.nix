@@ -108,7 +108,7 @@ in
       // nvidiaVolume; # Merge conditionally
     in
     {
-      environment.persistence.main = lib.mkIf config.my.impermanence.enable {
+      my.persist = {
         directories = [
           "/etc/wolf"
           "/docker"

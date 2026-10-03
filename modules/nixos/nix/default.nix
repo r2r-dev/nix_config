@@ -15,8 +15,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.persistence.main = lib.mkIf config.my.impermanence.enable {
-      hideMounts = true;
+    my.persist = {
       directories = [
         "/etc/nixos"
         "/etc/nix"

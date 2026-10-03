@@ -14,7 +14,7 @@ in
 
   config = lib.mkIf cfg.enable {
     services.openssh.enable = true;
-    environment.persistence.main = lib.mkIf config.my.impermanence.enable {
+    my.persist = {
       files = [
         "/etc/ssh/ssh_host_ed25519_key"
         "/etc/ssh/ssh_host_ed25519_key.pub"

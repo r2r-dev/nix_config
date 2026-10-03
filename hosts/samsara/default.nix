@@ -13,7 +13,10 @@
   ];
   my = {
     # displaylink left off: broken on 6.18.1-zen-dev
-    impermanence.enable = true;
+    persist = {
+      enable = true;
+      rollback.device = "/dev/mapper/pool0n0-decrypted";
+    };
     bluetooth.enable = true;
     boot.enable = true;
     plasma.enable = true;
@@ -37,10 +40,7 @@
       disableMitigations = true;
     };
     rgb.enable = true;
-    secrets = {
-      enable = true;
-      sshHostKeyDir = "/persist/etc/ssh";
-    };
+    secrets.enable = true;
     sound.enable = true;
     ssh.enable = true;
     steam = {

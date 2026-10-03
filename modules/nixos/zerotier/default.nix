@@ -15,7 +15,7 @@ in
   };
 
   config = lib.mkIf (cfg.warp.enable || cfg.puqu.enable) {
-    environment.persistence.main = lib.mkIf config.my.impermanence.enable {
+    my.persist = {
       files = [
         "/var/lib/zerotier-one/identity.secret"
         "/var/lib/zerotier-one/identity.public"

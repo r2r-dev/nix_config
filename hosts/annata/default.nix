@@ -14,7 +14,7 @@
   ];
 
   my = {
-    impermanence.enable = false;
+    persist.enable = false;
     bluetooth.enable = true;
     boot.enable = true;
     plasma.enable = false;
