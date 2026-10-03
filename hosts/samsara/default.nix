@@ -8,10 +8,12 @@
   nixpkgs.overlays = [ inputs.proton-cachyos.overlays.default ];
 
   imports = [
+    inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate # microcode + amd_pstate
     inputs.nur.modules.nixos.default
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
+
   my = {
     profiles = {
       workstation.enable = true;
@@ -67,17 +69,7 @@
 
   virtualisation.docker.storageDriver = "btrfs";
 
-  boot.kernelParams = [ "amd_pstate=active" ];
-
-  hardware = {
-    enableAllFirmware = true; # ?rgb?
-    cpu.amd.updateMicrocode = true;
-    # Enable OpenGL
-    graphics = {
-      enable32Bit = true;
-      enable = true;
-    };
-  };
+  hardware.enableAllFirmware = true; # ?rgb?
 
   environment.systemPackages = with pkgs; [
     nur.repos.xddxdd.uncategorized.vk-hdr-layer

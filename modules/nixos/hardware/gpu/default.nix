@@ -1,5 +1,6 @@
-# Hardware facts about the host that other modules adapt to.
-{ lib, ... }:
+# GPU: which GPU the host renders with. Turns on the graphics stack (with
+# 32-bit support for Steam/Wine) and lets other modules adapt to the vendor.
+{ config, lib, ... }:
 {
   options.my.hardware = {
     gpu = lib.mkOption {
@@ -16,6 +17,13 @@
         (`nvidia` enables my.hardware.nvidia) and GPU-specific tweaks in other
         modules (wolf, performance).
       '';
+    };
+  };
+
+  config = lib.mkIf (config.my.hardware.gpu != null) {
+    hardware.graphics = {
+      enable = true;
+      enable32Bit = true;
     };
   };
 }
