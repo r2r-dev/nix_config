@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.xbox;
+  cfg = config.my.xbox;
 in
 {
-  options.modules.nixos.xbox = {
+  options.my.xbox = {
     enable = lib.mkEnableOption "Xbox controller support";
   };
 

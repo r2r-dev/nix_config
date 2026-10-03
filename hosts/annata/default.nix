@@ -13,86 +13,44 @@
     ./audio.nix
   ];
 
-  modules = {
-    nixos = {
-      impermanence = {
-        enable = false;
-      };
-      bluetooth = {
+  my = {
+    impermanence.enable = false;
+    bluetooth.enable = true;
+    boot.enable = true;
+    plasma.enable = false;
+    noctalia.enable = true;
+    fans.enable = true;
+    flatpak.enable = true;
+    remotePower.enable = true;
+    kernel.enable = true;
+    keyboard.enable = false;
+    locale = {
+      enable = true;
+      regional = true;
+    };
+    network.enable = true;
+    nix.enable = true;
+    printing.enable = true;
+    displaylink.enable = true;
+    secrets.enable = true;
+    sound = {
+      enable = true;
+      jack = true;
+    };
+    ssh.enable = true;
+    steam = {
+      enable = true;
+      gamescopeSession = {
         enable = true;
+        width = 2560;
+        height = 1600;
       };
-      boot = {
-        enable = true;
-      };
-      desktop = {
-        enable = false;
-      };
-      noctalia = {
-        enable = true;
-      };
-      fans = {
-        enable = true;
-      };
-      flatpak = {
-        enable = true;
-      };
-      homeassistant = {
-        enable = true;
-      };
-      kernel = {
-        enable = true;
-      };
-      keyboard = {
-        enable = false;
-      };
-      locale = {
-        enable = true;
-        regional = true;
-      };
-      network = {
-        enable = true;
-      };
-      nix = {
-        enable = true;
-      };
-      printing = {
-        enable = true;
-      };
-      prompter = {
-        enable = true;
-      };
-      secrets = {
-        enable = true;
-      };
-      sound = {
-        enable = true;
-        jack = true;
-      };
-      ssh = {
-        enable = true;
-      };
-      steam = {
-        enable = true;
-        gamescopeSession = {
-          enable = true;
-          width = 2560;
-          height = 1600;
-        };
-      };
-      users = {
-        enable = true;
-      };
-      xbox = {
-        enable = true;
-      };
-      zerotier = {
-        puqu = {
-          enable = false;
-        };
-        warp = {
-          enable = false;
-        };
-      };
+    };
+    users.enable = true;
+    xbox.enable = true;
+    zerotier = {
+      puqu.enable = false;
+      warp.enable = false;
     };
   };
 

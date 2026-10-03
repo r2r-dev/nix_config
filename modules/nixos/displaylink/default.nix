@@ -1,4 +1,4 @@
-# Prompter: DisplayLink support (evdi kernel module + DisplayLinkManager
+# DisplayLink support (evdi kernel module + DisplayLinkManager
 # service) for external USB display adapters.
 {
   config,
@@ -7,10 +7,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.prompter;
+  cfg = config.my.displaylink;
 in
 {
-  options.modules.nixos.prompter = {
+  options.my.displaylink = {
     enable = lib.mkEnableOption "DisplayLink USB display support";
   };
 

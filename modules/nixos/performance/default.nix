@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.performance;
+  cfg = config.my.performance;
 in
 {
-  options.modules.nixos.performance = {
+  options.my.performance = {
     enable = lib.mkEnableOption "gaming performance tweaks (sched-ext, Proton env, zram)";
     scheduler = lib.mkOption {
       type = lib.types.str;

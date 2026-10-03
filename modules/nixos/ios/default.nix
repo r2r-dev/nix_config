@@ -7,10 +7,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.ios;
+  cfg = config.my.ios;
 in
 {
-  options.modules.nixos.ios = {
+  options.my.ios = {
     enable = lib.mkEnableOption "iOS device tethering and file access";
   };
 

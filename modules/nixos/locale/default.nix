@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.locale;
+  cfg = config.my.locale;
 in
 {
-  options.modules.nixos.locale = {
+  options.my.locale = {
     enable = lib.mkEnableOption "time zone and locale settings";
     timeZone = lib.mkOption {
       type = lib.types.str;

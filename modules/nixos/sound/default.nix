@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.sound;
+  cfg = config.my.sound;
 in
 {
-  options.modules.nixos.sound = {
+  options.my.sound = {
     enable = lib.mkEnableOption "the PipeWire audio stack";
     jack = lib.mkEnableOption "JACK audio support in PipeWire";
     socketActivation = lib.mkOption {

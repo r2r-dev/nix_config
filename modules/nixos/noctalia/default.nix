@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.noctalia;
+  cfg = config.my.noctalia;
 in
 {
-  options.modules.nixos.noctalia = {
+  options.my.noctalia = {
     enable = lib.mkEnableOption "the noctalia desktop environment";
   };
 

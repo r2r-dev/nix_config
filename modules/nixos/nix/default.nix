@@ -6,24 +6,22 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.nix;
+  cfg = config.my.nix;
 in
 {
-  options.modules.nixos.nix = {
+  options.my.nix = {
     enable = lib.mkEnableOption "Nix daemon settings (flakes, unfree)";
   };
 
   config = lib.mkIf cfg.enable {
-    environment.persistence.main =
-      lib.mkIf config.modules.nixos.impermanence.enable
-        {
-          hideMounts = true;
-          directories = [
-            "/etc/nixos"
-            "/etc/nix"
-            "/var/lib/nixos"
-          ];
-        };
+    environment.persistence.main = lib.mkIf config.my.impermanence.enable {
+      hideMounts = true;
+      directories = [
+        "/etc/nixos"
+        "/etc/nix"
+        "/var/lib/nixos"
+      ];
+    };
     nix = {
       extraOptions = ''
         experimental-features = nix-command flakes

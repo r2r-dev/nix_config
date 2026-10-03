@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.users;
+  cfg = config.my.users;
 in
 {
-  options.modules.nixos.users = {
+  options.my.users = {
     enable = lib.mkEnableOption "the primary r2r user";
     extraGroups = lib.mkOption {
       type = lib.types.listOf lib.types.str;

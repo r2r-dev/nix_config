@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.kernel;
+  cfg = config.my.kernel;
 in
 {
-  options.modules.nixos.kernel = {
+  options.my.kernel = {
     enable = lib.mkEnableOption "managing the kernel package via this module";
     kernelPackages = lib.mkOption {
       default = pkgs.linuxPackages_zen;

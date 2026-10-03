@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.impermanence;
+  cfg = config.my.impermanence;
 in
 {
-  options.modules.nixos.impermanence = {
+  options.my.impermanence = {
     enable = lib.mkEnableOption "the ephemeral btrfs root (rollback on boot)";
   };
 

@@ -1,4 +1,4 @@
-# Home Assistant: a dedicated homeassistant user allowed to power the host
+# Remote power: a dedicated homeassistant user allowed to power the host
 # off/reboot over SSH (for use as a Home Assistant switch).
 {
   config,
@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.homeassistant;
+  cfg = config.my.remotePower;
 in
 {
-  options.modules.nixos.homeassistant = {
+  options.my.remotePower = {
     enable = lib.mkEnableOption "the Home Assistant power-control user";
   };
 

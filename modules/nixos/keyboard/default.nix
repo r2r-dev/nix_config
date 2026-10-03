@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.keyboard;
+  cfg = config.my.keyboard;
 in
 {
-  options.modules.nixos.keyboard = {
+  options.my.keyboard = {
     enable = lib.mkEnableOption "keyd key remapping";
   };
 

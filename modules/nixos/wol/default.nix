@@ -7,10 +7,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.wol;
+  cfg = config.my.wol;
 in
 {
-  options.modules.nixos.wol = {
+  options.my.wol = {
     enable = lib.mkEnableOption "Wake-on-LAN support";
     interface = lib.mkOption {
       type = lib.types.str;

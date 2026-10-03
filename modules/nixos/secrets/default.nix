@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.secrets;
+  cfg = config.my.secrets;
 in
 {
-  options.modules.nixos.secrets = {
+  options.my.secrets = {
     enable = lib.mkEnableOption "agenix secrets for the r2r user";
     sshHostKeyDir = lib.mkOption {
       type = lib.types.str;

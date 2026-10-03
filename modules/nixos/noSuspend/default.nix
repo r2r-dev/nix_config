@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.no_suspend;
+  cfg = config.my.noSuspend;
 in
 {
-  options.modules.nixos.no_suspend = {
+  options.my.noSuspend = {
     enable = lib.mkEnableOption "disabling all forms of system sleep/suspend";
   };
 

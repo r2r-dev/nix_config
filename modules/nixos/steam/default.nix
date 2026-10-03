@@ -7,12 +7,12 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.steam;
+  cfg = config.my.steam;
   gs = cfg.gamescopeSession;
   auto = cfg.autoLogin;
 in
 {
-  options.modules.nixos.steam = {
+  options.my.steam = {
     enable = lib.mkEnableOption "Steam with gamescope and gamemode";
     autoLogin = {
       enable = lib.mkEnableOption "automatic login straight into the Steam session";

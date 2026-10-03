@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.nvidia;
+  cfg = config.my.nvidia;
 in
 {
-  options.modules.nixos.nvidia = {
+  options.my.nvidia = {
     enable = lib.mkEnableOption "the NVIDIA graphics driver";
   };
 

@@ -7,10 +7,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.fans;
+  cfg = config.my.fans;
 in
 {
-  options.modules.nixos.fans = {
+  options.my.fans = {
     enable = lib.mkEnableOption "CoolerControl-based fan control";
     it87.enable = lib.mkEnableOption "the it87 temperature sensor kernel module (desktop boards)";
   };

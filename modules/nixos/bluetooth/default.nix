@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.bluetooth;
+  cfg = config.my.bluetooth;
 in
 {
-  options.modules.nixos.bluetooth = {
+  options.my.bluetooth = {
     enable = lib.mkEnableOption "Bluetooth support (with Blueman)";
   };
 
@@ -20,12 +20,10 @@ in
       powerOnBoot = true;
     };
     services.blueman.enable = true;
-    environment.persistence.main =
-      lib.mkIf config.modules.nixos.impermanence.enable
-        {
-          directories = [
-            "/var/lib/bluetooth"
-          ];
-        };
+    environment.persistence.main = lib.mkIf config.my.impermanence.enable {
+      directories = [
+        "/var/lib/bluetooth"
+      ];
+    };
   };
 }

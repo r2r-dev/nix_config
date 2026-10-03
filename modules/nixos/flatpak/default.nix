@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.flatpak;
+  cfg = config.my.flatpak;
 in
 {
-  options.modules.nixos.flatpak = {
+  options.my.flatpak = {
     enable = lib.mkEnableOption "Flatpak with the Flathub remote";
   };
 

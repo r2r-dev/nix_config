@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.printing;
+  cfg = config.my.printing;
 in
 {
-  options.modules.nixos.printing = {
+  options.my.printing = {
     enable = lib.mkEnableOption "CUPS printing (with Avahi mDNS discovery)";
   };
 

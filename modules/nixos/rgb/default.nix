@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.rgb;
+  cfg = config.my.rgb;
 in
 {
-  options.modules.nixos.rgb = {
+  options.my.rgb = {
     enable = lib.mkEnableOption "OpenRGB hardware lighting control";
   };
 

@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.desktop;
+  cfg = config.my.plasma;
 in
 {
-  options.modules.nixos.desktop = {
+  options.my.plasma = {
     enable = lib.mkEnableOption "the KDE Plasma desktop environment";
   };
 

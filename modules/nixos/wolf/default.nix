@@ -1,4 +1,4 @@
-# GOW Wolf: Games-on-Whales "Wolf" game-streaming server running in Docker,
+# Wolf: Games-on-Whales "Wolf" game-streaming server running in Docker,
 # with optional NVIDIA GPU passthrough and driver-volume bootstrapping.
 {
   config,
@@ -7,15 +7,15 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.gow_wolf;
+  cfg = config.my.wolf;
 in
 {
   # Create the main option to toggle the service state
-  options.modules.nixos.gow_wolf = {
-    enable = lib.mkEnableOption "gow_wolf";
+  options.my.wolf = {
+    enable = lib.mkEnableOption "the Games-on-Whales Wolf streaming server";
 
     # Other options to go here
-    gpu_type = lib.mkOption {
+    gpuType = lib.mkOption {
       type = lib.types.enum [
         "amd"
         "nvidia"
@@ -32,11 +32,11 @@ in
     let
       # The docker-compose.yml file (as a JSON)
       wolfDevices =
-        if cfg.gpu_type == "amd" then
+        if cfg.gpuType == "amd" then
           [
             "/dev/dri"
           ]
-        else if cfg.gpu_type == "nvidia" then
+        else if cfg.gpuType == "nvidia" then
           [
             "/dev/dri"
             "/dev/nvidia-uvm"
@@ -51,11 +51,11 @@ in
           [ ];
 
       wolfEnvironment =
-        if cfg.gpu_type == "software" then
+        if cfg.gpuType == "software" then
           [
             "WOLF_RENDER_NODE=software"
           ]
-        else if cfg.gpu_type == "nvidia" then
+        else if cfg.gpuType == "nvidia" then
           [
             "NVIDIA_DRIVER_VOLUME_NAME=nvidia-driver-vol"
           ]
@@ -63,7 +63,7 @@ in
           [ ];
 
       wolfVolumes =
-        if cfg.gpu_type == "nvidia" then
+        if cfg.gpuType == "nvidia" then
           [
             "nvidia-driver-vol:/usr/nvidia:rw"
           ]
@@ -71,7 +71,7 @@ in
           [ ];
 
       nvidiaVolume =
-        if cfg.gpu_type == "nvidia" then
+        if cfg.gpuType == "nvidia" then
           {
             volumes = {
               nvidia-driver-vol = {
@@ -108,14 +108,12 @@ in
       // nvidiaVolume; # Merge conditionally
     in
     {
-      environment.persistence.main =
-        lib.mkIf config.modules.nixos.impermanence.enable
-          {
-            directories = [
-              "/etc/wolf"
-              "/docker"
-            ];
-          };
+      environment.persistence.main = lib.mkIf config.my.impermanence.enable {
+        directories = [
+          "/etc/wolf"
+          "/docker"
+        ];
+      };
       services.udev.packages = [
         # prevent wolf's virtual controllers from being picked up by host session
         (pkgs.writeTextFile {
@@ -239,7 +237,7 @@ in
 
       # Build out the nvidia-driver-vol if gpu is nvidia
       systemd.services = {
-        nvidiaDriverVolumeSetup = lib.mkIf (cfg.gpu_type == "nvidia") {
+        nvidiaDriverVolumeSetup = lib.mkIf (cfg.gpuType == "nvidia") {
           description = "One-time NVIDIA driver Docker volume builder for GOW";
           wantedBy = [ "multi-user.target" ];
 
@@ -294,11 +292,11 @@ in
           after = [
             "docker.service"
           ]
-          ++ lib.optional (cfg.gpu_type == "nvidia") "nvidiaDriverVolumeSetup.service";
+          ++ lib.optional (cfg.gpuType == "nvidia") "nvidiaDriverVolumeSetup.service";
           requires = [
             "docker.service"
           ]
-          ++ lib.optional (cfg.gpu_type == "nvidia") "nvidiaDriverVolumeSetup.service";
+          ++ lib.optional (cfg.gpuType == "nvidia") "nvidiaDriverVolumeSetup.service";
         };
       };
     }

@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.modules.nixos.boot;
+  cfg = config.my.boot;
 in
 {
-  options.modules.nixos.boot = {
+  options.my.boot = {
     enable = lib.mkEnableOption "the quiet systemd-boot + Plymouth boot setup";
   };
 
