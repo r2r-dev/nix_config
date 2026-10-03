@@ -1,4 +1,4 @@
-# Desktop: KDE Plasma 6 with SDDM and a Polish keyboard layout.
+# Plasma: KDE Plasma 6 with SDDM (keyboard layout comes from my.keyboard).
 {
   config,
   lib,
@@ -17,8 +17,6 @@ in
     services = {
       displayManager.sddm.enable = true;
       desktopManager.plasma6.enable = true;
-      xserver.xkb.layout = "pl";
     };
-    console.keyMap = "pl2";
   };
 }

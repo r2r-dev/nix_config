@@ -24,10 +24,9 @@ in
       enable = true;
       settings = {
         cursor.size = 24;
-        keyboard.layout = "pl";
+        keyboard.layout = config.my.keyboard.layout;
         path = "${pkgs.graphite-cursors}/share/icons";
       };
     };
-    console.keyMap = "pl2";
   };
 }

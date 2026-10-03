@@ -24,7 +24,6 @@
     flatpak.enable = true;
     remotePower.enable = true;
     kernel.enable = true;
-    keyboard.enable = false;
     locale = {
       enable = true;
       regional = true;
