@@ -97,7 +97,7 @@
       ];
       home.packages = with pkgs; [
         git
-        nixfmt-rfc-style
+        nixfmt
       ];
     };
 

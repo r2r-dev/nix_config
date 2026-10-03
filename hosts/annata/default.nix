@@ -54,10 +54,7 @@
     };
   };
 
-  programs = {
-    kdeconnect.enable = true;
-    firefox.enable = true;
-  };
+  programs.kdeconnect.enable = true;
 
   home-manager.users.r2r =
     { pkgs, ... }:
@@ -75,7 +72,6 @@
         '')
         discord
         signal-desktop
-        moonlight-qt
         nixfmt
         openscad-unstable
         proton-vpn
@@ -107,7 +103,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    flatpak
     kitty
     git
     gnome-software
