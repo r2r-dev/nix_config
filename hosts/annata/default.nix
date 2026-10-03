@@ -13,46 +13,31 @@
   ];
 
   my = {
-    # core
-    boot.enable = true;
-    kernel.enable = true;
-    locale = {
-      enable = true;
-      regional = true;
+    profiles = {
+      workstation.enable = true;
+      gaming.enable = true;
     };
+
+    locale.regional = true;
     network.enable = true;
-    nix.enable = true;
-    secrets.enable = true;
-    ssh.enable = true;
-    user.enable = true;
 
     hardware = {
       gpu = "amd";
       gpdPocket4.enable = true;
-      bluetooth.enable = true;
       displaylink.enable = true;
       fans.enable = true;
-      xbox.enable = true;
     };
 
     desktop = {
       noctalia.enable = true;
       flatpak.enable = true;
       printing.enable = true;
-      sound = {
-        enable = true;
-        jack = true;
-      };
+      sound.jack = true;
     };
 
-    gaming = {
-      steam.enable = true;
-      gamemode.enable = true;
-      session = {
-        enable = true;
-        width = 2560;
-        height = 1600;
-      };
+    gaming.session = {
+      width = 2560;
+      height = 1600;
     };
 
     services.remotePower.enable = true;

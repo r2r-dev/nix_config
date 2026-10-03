@@ -13,30 +13,24 @@
     ./hardware-configuration.nix
   ];
   my = {
-    # core
-    boot.enable = true;
-    kernel.enable = true;
-    locale.enable = true;
-    nix.enable = true;
+    profiles = {
+      workstation.enable = true;
+      gaming.enable = true;
+    };
+
     persist = {
       enable = true;
       rollback.device = "/dev/mapper/pool0n0-decrypted";
     };
     power.neverSleep = true;
-    secrets.enable = true;
-    ssh.enable = true;
-    user = {
-      enable = true;
-      extraGroups = [
-        "wheel"
-        "input"
-      ];
-    };
+    user.extraGroups = [
+      "wheel"
+      "input"
+    ];
 
     hardware = {
       gpu = "nvidia";
       # displaylink left off: broken on 6.18.1-zen-dev
-      bluetooth.enable = true;
       fans = {
         enable = true;
         it87.enable = true;
@@ -47,23 +41,16 @@
         enable = true;
         interface = "enp14s0";
       };
-      xbox.enable = true;
     };
 
-    desktop = {
-      plasma.enable = true;
-      sound.enable = true;
-    };
+    desktop.plasma.enable = true;
 
     gaming = {
       performance = {
         enable = true;
         disableMitigations = true;
       };
-      steam.enable = true;
-      gamemode.enable = true;
       session = {
-        enable = true;
         autoLogin.enable = true;
         width = 3840;
         height = 2160;
