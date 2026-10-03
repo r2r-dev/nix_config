@@ -13,44 +13,18 @@
     ./hardware-configuration.nix
   ];
   my = {
-    hardware.gpu = "nvidia";
-    # displaylink left off: broken on 6.18.1-zen-dev
+    # core
+    boot.enable = true;
+    kernel.enable = true;
+    locale.enable = true;
+    nix.enable = true;
     persist = {
       enable = true;
       rollback.device = "/dev/mapper/pool0n0-decrypted";
     };
-    bluetooth.enable = true;
-    boot.enable = true;
-    plasma.enable = true;
-    wolf.enable = true;
-    remotePower.enable = true;
-    kernel.enable = true;
-    fans = {
-      enable = true;
-      it87.enable = true;
-    };
-    ios.enable = true;
-    locale.enable = true;
-    noSuspend.enable = true;
-    nix.enable = true;
-    performance = {
-      enable = true;
-      disableMitigations = true;
-    };
-    rgb.enable = true;
+    power.neverSleep = true;
     secrets.enable = true;
-    sound.enable = true;
     ssh.enable = true;
-    steam = {
-      enable = true;
-      autoLogin.enable = true;
-      gamescopeSession = {
-        enable = true;
-        width = 3840;
-        height = 2160;
-        refreshRate = 165;
-      };
-    };
     user = {
       enable = true;
       extraGroups = [
@@ -58,13 +32,50 @@
         "input"
       ];
     };
-    xbox.enable = true;
-    zerotier = {
-      puqu.enable = true;
+
+    hardware = {
+      gpu = "nvidia";
+      # displaylink left off: broken on 6.18.1-zen-dev
+      bluetooth.enable = true;
+      fans = {
+        enable = true;
+        it87.enable = true;
+      };
+      ios.enable = true;
+      rgb.enable = true;
+      wol = {
+        enable = true;
+        interface = "enp14s0";
+      };
+      xbox.enable = true;
     };
-    wol = {
-      enable = true;
-      interface = "enp14s0";
+
+    desktop = {
+      plasma.enable = true;
+      sound.enable = true;
+    };
+
+    gaming = {
+      performance = {
+        enable = true;
+        disableMitigations = true;
+      };
+      steam = {
+        enable = true;
+        autoLogin.enable = true;
+        gamescopeSession = {
+          enable = true;
+          width = 3840;
+          height = 2160;
+          refreshRate = 165;
+        };
+      };
+    };
+
+    services = {
+      remotePower.enable = true;
+      wolf.enable = true;
+      zerotier.puqu.enable = true;
     };
   };
 

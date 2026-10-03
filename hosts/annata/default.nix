@@ -15,15 +15,8 @@
   ];
 
   my = {
-    hardware.gpu = "amd";
-    persist.enable = false;
-    bluetooth.enable = true;
+    # core
     boot.enable = true;
-    plasma.enable = false;
-    noctalia.enable = true;
-    fans.enable = true;
-    flatpak.enable = true;
-    remotePower.enable = true;
     kernel.enable = true;
     locale = {
       enable = true;
@@ -31,15 +24,29 @@
     };
     network.enable = true;
     nix.enable = true;
-    printing.enable = true;
-    displaylink.enable = true;
     secrets.enable = true;
-    sound = {
-      enable = true;
-      jack = true;
-    };
     ssh.enable = true;
-    steam = {
+    user.enable = true;
+
+    hardware = {
+      gpu = "amd";
+      bluetooth.enable = true;
+      displaylink.enable = true;
+      fans.enable = true;
+      xbox.enable = true;
+    };
+
+    desktop = {
+      noctalia.enable = true;
+      flatpak.enable = true;
+      printing.enable = true;
+      sound = {
+        enable = true;
+        jack = true;
+      };
+    };
+
+    gaming.steam = {
       enable = true;
       gamescopeSession = {
         enable = true;
@@ -47,12 +54,8 @@
         height = 1600;
       };
     };
-    user.enable = true;
-    xbox.enable = true;
-    zerotier = {
-      puqu.enable = false;
-      warp.enable = false;
-    };
+
+    services.remotePower.enable = true;
   };
 
   programs.kdeconnect.enable = true;

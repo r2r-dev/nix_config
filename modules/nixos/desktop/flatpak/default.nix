@@ -1,0 +1,28 @@
+# Flatpak: enable Flatpak and register the Flathub remote at boot.
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.my.desktop.flatpak;
+in
+{
+  options.my.desktop.flatpak = {
+    enable = lib.mkEnableOption "Flatpak with the Flathub remote";
+  };
+
+  config = lib.mkIf cfg.enable {
+    xdg.portal.enable = true;
+    xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    services.flatpak.enable = true;
+    systemd.services.flatpak-repo = {
+      wantedBy = [ "multi-user.target" ];
+      path = [ pkgs.flatpak ];
+      script = ''
+        flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+      '';
+    };
+  };
+}

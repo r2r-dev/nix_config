@@ -1,7 +1,9 @@
-# Every module directory here is exposed as `nixosModules.<dirname>`.
+# Every module directory below here (grouped as core/, hardware/, desktop/,
+# gaming/, services/) is exposed as `nixosModules.<dirname>`.
 # `nixosModules.default` imports all of them; each module is inert until its
-# `enable` option is set, so hosts only toggle options and never list imports.
-# Adding a module is just creating the directory.
+# options are set, so hosts only set options and never list imports.
+# Option paths follow the directories: hardware/nvidia -> my.hardware.nvidia;
+# core modules sit directly under my.* (core/user -> my.user).
 let
   modules = import ../../lib/import-dir.nix ./.;
 in
