@@ -35,8 +35,10 @@ in
     zramSwap.enable = true;
 
     environment.sessionVariables = {
-      PROTON_ENABLE_NVAPI = "1"; # DLSS
       PROTON_USE_NTSYNC = "1"; # use the ntsync
+    }
+    // lib.optionalAttrs (config.my.hardware.gpu == "nvidia") {
+      PROTON_ENABLE_NVAPI = "1"; # DLSS
       __GL_THREADED_OPTIMIZATIONS = "1";
     };
   };

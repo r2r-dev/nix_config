@@ -15,6 +15,7 @@
   ];
 
   my = {
+    hardware.gpu = "amd";
     persist.enable = false;
     bluetooth.enable = true;
     boot.enable = true;

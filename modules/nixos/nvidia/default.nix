@@ -9,7 +9,10 @@ let
 in
 {
   options.my.nvidia = {
-    enable = lib.mkEnableOption "the NVIDIA graphics driver";
+    enable = lib.mkEnableOption "the NVIDIA graphics driver" // {
+      default = config.my.hardware.gpu == "nvidia";
+      defaultText = lib.literalExpression ''config.my.hardware.gpu == "nvidia"'';
+    };
   };
 
   config = lib.mkIf cfg.enable {

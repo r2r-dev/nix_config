@@ -13,6 +13,7 @@
     ./hardware-configuration.nix
   ];
   my = {
+    hardware.gpu = "nvidia";
     # displaylink left off: broken on 6.18.1-zen-dev
     persist = {
       enable = true;
@@ -21,10 +22,7 @@
     bluetooth.enable = true;
     boot.enable = true;
     plasma.enable = true;
-    wolf = {
-      enable = true;
-      gpuType = "nvidia";
-    };
+    wolf.enable = true;
     remotePower.enable = true;
     kernel.enable = true;
     fans = {
@@ -35,7 +33,6 @@
     locale.enable = true;
     noSuspend.enable = true;
     nix.enable = true;
-    nvidia.enable = true;
     performance = {
       enable = true;
       disableMitigations = true;

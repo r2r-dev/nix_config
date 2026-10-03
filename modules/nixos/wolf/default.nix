@@ -14,16 +14,25 @@ in
   options.my.wolf = {
     enable = lib.mkEnableOption "the Games-on-Whales Wolf streaming server";
 
-    # Other options to go here
     gpuType = lib.mkOption {
       type = lib.types.enum [
-        "amd"
+        "dri"
         "nvidia"
         "software"
       ];
-      default = "software";
-      example = "amd";
-      description = "Which GPU backend to use.";
+      default =
+        {
+          nvidia = "nvidia";
+          amd = "dri";
+          intel = "dri";
+        }
+        .${toString config.my.hardware.gpu} or "software";
+      defaultText = lib.literalMD "derived from `my.hardware.gpu`";
+      description = ''
+        GPU backend for the container: `dri` passes /dev/dri (AMD, Intel),
+        `nvidia` adds the NVIDIA device nodes and driver volume, `software`
+        renders on the CPU.
+      '';
     };
   };
 
@@ -32,7 +41,7 @@ in
     let
       # The docker-compose.yml file (as a JSON)
       wolfDevices =
-        if cfg.gpuType == "amd" then
+        if cfg.gpuType == "dri" then
           [
             "/dev/dri"
           ]
