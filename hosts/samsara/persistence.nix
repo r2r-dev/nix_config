@@ -1,7 +1,7 @@
-# Home-manager impermanence configuration for samsara's /persist volume.
-{ ... }:
+# Home-manager impermanence configuration for samsara's persistent volume.
+{ osConfig, ... }:
 {
-  home.persistence."/persist" = {
+  home.persistence.${osConfig.my.persist.root} = {
     directories = [
       "Downloads"
       "Music"
