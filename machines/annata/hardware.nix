@@ -1,9 +1,7 @@
 # GPD Pocket 4 specific hardware quirks.
 { pkgs, ... }:
 let
-  libfprint-focaltech =
-    pkgs.callPackage ./fingerprint.nix
-      { };
+  libfprint-focaltech = pkgs.callPackage ./fingerprint.nix { };
 in
 {
   hardware = {
