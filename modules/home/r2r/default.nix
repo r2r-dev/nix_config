@@ -3,11 +3,6 @@
 # machine's configuration.
 { pkgs, ... }:
 {
-  nix = {
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
-  };
   home.packages = with pkgs; [
     keepassxc
     python3

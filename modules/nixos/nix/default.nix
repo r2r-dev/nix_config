@@ -1,5 +1,6 @@
-# Nix: enable flakes/nix-command, allow unfree packages, and persist the
-# Nix/NixOS state directories on impermanent hosts.
+# Nix: enable flakes/nix-command and persist the Nix/NixOS state
+# directories on impermanent hosts. (Unfree packages are allowed for every
+# host in flake.nix.)
 {
   config,
   lib,
@@ -10,7 +11,7 @@ let
 in
 {
   options.my.nix = {
-    enable = lib.mkEnableOption "Nix daemon settings (flakes, unfree)";
+    enable = lib.mkEnableOption "Nix daemon settings (flakes)";
   };
 
   config = lib.mkIf cfg.enable {
@@ -22,16 +23,9 @@ in
         "/var/lib/nixos"
       ];
     };
-    nix = {
-      extraOptions = ''
-        experimental-features = nix-command flakes
-      '';
-    };
-    nixpkgs = {
-      config = {
-        allowUnfree = true;
-        allowUnfreePredicate = _: true;
-      };
-    };
+    nix.settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 }
