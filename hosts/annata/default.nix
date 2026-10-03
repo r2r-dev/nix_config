@@ -46,34 +46,7 @@
   programs.kdeconnect.enable = true;
   hardware.ledger.enable = true;
 
-  home-manager.users.${config.my.user.name} =
-    { pkgs, ... }:
-    {
-      imports = [
-        inputs.noctalia.homeModules.default
-        inputs.self.homeManagerModules.r2r
-      ];
-      home.packages = with pkgs; [
-        discord
-        signal-desktop
-        nixfmt
-        openscad-unstable
-        proton-vpn
-        sshx # TODO ssh module
-        plasticity
-        coder
-      ];
-
-      home.pointerCursor = {
-        enable = true;
-        package = pkgs.graphite-cursors;
-        name = "graphite-light";
-        size = 24;
-        gtk.enable = true; # GTK apps
-        x11.enable = true; # XWayland apps
-        hyprcursor.enable = true; # Hyprland
-      };
-    };
+  home-manager.users.${config.my.user.name} = ./home.nix;
 
   services.displayManager.noctalia-greeter = {
     passwordlessSyncUsers = [ config.my.user.name ];

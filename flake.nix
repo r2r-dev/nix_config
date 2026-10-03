@@ -71,6 +71,9 @@
             # installs user packages into /etc/profiles/per-user.
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.sharedModules = [ self.homeManagerModules.default ];
+            # Lets home-manager modules reach flake inputs (e.g. noctalia).
+            home-manager.extraSpecialArgs = { inherit inputs; };
             environment.systemPackages = [
               agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
             ];

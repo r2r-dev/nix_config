@@ -83,18 +83,7 @@
     nur.repos.xddxdd.uncategorized.vk-hdr-layer
   ];
 
-  home-manager.users.${config.my.user.name} =
-    { pkgs, ... }:
-    {
-      imports = [
-        inputs.self.homeManagerModules.r2r
-        ./persistence.nix
-      ];
-      home.packages = with pkgs; [
-        git
-        nixfmt
-      ];
-    };
+  home-manager.users.${config.my.user.name} = ./home.nix;
 
   system.stateVersion = "24.11";
 }
