@@ -27,15 +27,18 @@ in
         "hid_microsoft" # Xbox One Elite 2 controller driver preferred by Steam
       ];
     };
-    hardware.bluetooth.settings.General = {
-      experimental = true; # show battery
+    # Only relevant for wireless controllers; leaves BlueZ alone otherwise.
+    hardware.bluetooth.settings.General =
+      lib.mkIf config.hardware.bluetooth.enable
+        {
+          experimental = true; # show battery
 
-      # https://www.reddit.com/r/NixOS/comments/1ch5d2p/comment/lkbabax/
-      # for pairing bluetooth controller
-      Privacy = "device";
-      JustWorksRepairing = "always";
-      Class = "0x000100";
-      FastConnectable = true;
-    };
+          # https://www.reddit.com/r/NixOS/comments/1ch5d2p/comment/lkbabax/
+          # for pairing bluetooth controller
+          Privacy = "device";
+          JustWorksRepairing = "always";
+          Class = "0x000100";
+          FastConnectable = true;
+        };
   };
 }

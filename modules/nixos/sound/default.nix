@@ -34,9 +34,8 @@ in
       # Disable the HFP bluetooth profile, because I always use external
       # microphones anyway. It sucks and sometimes devices end up caught
       # in it even if I have another microphone.
-      # TODO: mkif bluetooth
       wireplumber.enable = true;
-      wireplumber.extraConfig = {
+      wireplumber.extraConfig = lib.mkIf config.hardware.bluetooth.enable {
         "wireplumber.settings" = {
           "bluetooth.autoswitch-to-headset-profile" = false;
         };
