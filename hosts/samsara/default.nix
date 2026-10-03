@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   inputs,
   ...
@@ -53,7 +54,7 @@
         refreshRate = 165;
       };
     };
-    users = {
+    user = {
       enable = true;
       extraGroups = [
         "wheel"
@@ -88,7 +89,7 @@
     nur.repos.xddxdd.uncategorized.vk-hdr-layer
   ];
 
-  home-manager.users.r2r =
+  home-manager.users.${config.my.user.name} =
     { pkgs, ... }:
     {
       imports = [

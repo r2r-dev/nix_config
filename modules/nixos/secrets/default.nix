@@ -1,6 +1,7 @@
 # Secrets: agenix decryption using the host's SSH host keys as identities.
 # The keys are read from the persistent volume on impermanent hosts, since
 # agenix runs before the persisted files are bind-mounted into /etc.
+# Individual secrets are declared by the modules that use them.
 {
   config,
   lib,
@@ -22,6 +23,5 @@ in
       "${sshHostKeyDir}/ssh_host_ed25519_key"
       "${sshHostKeyDir}/ssh_host_rsa_key"
     ];
-    age.secrets."r2r.passwd".file = ../../../secrets/r2r.passwd.age;
   };
 }

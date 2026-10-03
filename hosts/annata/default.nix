@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   inputs,
   ...
@@ -46,7 +47,7 @@
         height = 1600;
       };
     };
-    users.enable = true;
+    user.enable = true;
     xbox.enable = true;
     zerotier = {
       puqu.enable = false;
@@ -56,7 +57,7 @@
 
   programs.kdeconnect.enable = true;
 
-  home-manager.users.r2r =
+  home-manager.users.${config.my.user.name} =
     { pkgs, ... }:
     {
       imports = [
@@ -93,7 +94,7 @@
     };
 
   services.displayManager.noctalia-greeter = {
-    passwordlessSyncUsers = [ "r2r" ];
+    passwordlessSyncUsers = [ config.my.user.name ];
     settings = {
       appearance.hide_logo = true;
       output.transforms = "eDP-1:270";

@@ -22,7 +22,8 @@ in
       enable = lib.mkEnableOption "automatic login straight into the Steam session";
       user = lib.mkOption {
         type = lib.types.str;
-        default = "r2r";
+        default = config.my.user.name;
+        defaultText = lib.literalExpression "config.my.user.name";
         description = "User to automatically log in as.";
       };
     };
@@ -47,7 +48,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    users.users.r2r = {
+    users.users.${config.my.user.name} = {
       extraGroups = [ "gamemode" ];
       packages = with pkgs; [
         bottles

@@ -1,4 +1,4 @@
-# RGB: OpenRGB hardware lighting control (with i2c access for the r2r user).
+# RGB: OpenRGB hardware lighting control (with i2c access for the primary user).
 {
   config,
   lib,
@@ -36,6 +36,6 @@ in
     boot.kernelModules = [
       "i2c-piix4" # secondary i2c sensor - for rgb?
     ];
-    users.groups.i2c.members = [ "r2r" ]; # openrgb: create i2c group and add default user to it
+    users.groups.i2c.members = [ config.my.user.name ]; # openrgb: i2c access for the primary user
   };
 }
