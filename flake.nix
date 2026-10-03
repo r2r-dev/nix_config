@@ -93,7 +93,10 @@
         lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs outoftree; };
-          modules = commonModules ++ [ path ];
+          modules = commonModules ++ [
+            { networking.hostName = name; }
+            path
+          ];
         };
     in
     {

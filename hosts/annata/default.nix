@@ -51,7 +51,6 @@
       };
       network = {
         enable = true;
-        hostName = "annata";
       };
       nix = {
         enable = true;
