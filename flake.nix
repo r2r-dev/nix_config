@@ -67,6 +67,10 @@
           {
             nixpkgs.overlays = [ self.overlays.default ];
             nixpkgs.config.allowUnfree = true;
+            # Home-manager uses the system's nixpkgs (overlays, unfree) and
+            # installs user packages into /etc/profiles/per-user.
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
             environment.systemPackages = [
               agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
             ];

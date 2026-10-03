@@ -3,12 +3,6 @@
 # machine's configuration.
 { pkgs, ... }:
 {
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-      allowUnfreePredicate = _: true;
-    };
-  };
   nix = {
     extraOptions = ''
       experimental-features = nix-command flakes
