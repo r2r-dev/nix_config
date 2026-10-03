@@ -127,5 +127,16 @@
           nur.modules.nixos.default
         ];
       };
+
+      # `nix fmt` formats the tree (nixfmt, 80 columns); `nix fmt -- --ci` only checks it.
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree.override {
+        settings.formatter.nixfmt.options = [ "--width=80" ];
+      };
+
+      # `nix flake check` evaluates every host; `nix build .#checks.<system>.<host>`
+      # builds its full system closure.
+      checks.${system} = nixpkgs.lib.mapAttrs (
+        _: host: host.config.system.build.toplevel
+      ) self.nixosConfigurations;
     };
 }
