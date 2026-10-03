@@ -1,34 +1,12 @@
 {
   pkgs,
-  outputs,
   inputs,
   ...
 }:
 {
-  imports = with outputs.nixosModules; [
-    impermanence
-    homeassistant
-    prompter
-    bluetooth
-    boot
-    gow_wolf
-    desktop
-    fans
-    flatpak
-    nix
-    noctalia
-    kernel
-    keyboard
-    locale
-    network
-    printing
-    secrets
-    sound
-    ssh
-    steam
-    users
-    xbox
-    zerotier
+  imports = [
+    inputs.nixos-hardware.nixosModules.gpd-pocket-4
+    inputs.nix-flatpak.nixosModules.nix-flatpak
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./hardware.nix
@@ -129,7 +107,7 @@
     {
       imports = [
         inputs.noctalia.homeModules.default
-        outputs.homeManagerModules.r2r
+        inputs.self.homeManagerModules.r2r
       ];
       home.packages = with pkgs; [
         (writeShellScriptBin "autorotate" ''

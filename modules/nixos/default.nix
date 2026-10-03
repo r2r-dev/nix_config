@@ -1,16 +1,8 @@
-# Auto-import every module directory in this folder.
-# Each subdirectory is expected to contain a `default.nix`, and is exposed
-# under `outputs.nixosModules.<dirname>`. Adding a new module is just a
-# matter of creating the directory — no need to edit this file.
+# Every module directory here is exposed as `nixosModules.<dirname>`.
+# `nixosModules.default` imports all of them; each module is inert until its
+# `enable` option is set, so hosts only toggle options and never list imports.
+# Adding a module is just creating the directory.
 let
-  entries = builtins.readDir ./.;
-  moduleNames = builtins.filter (name: entries.${name} == "directory") (
-    builtins.attrNames entries
-  );
+  modules = import ../../lib/import-dir.nix ./.;
 in
-builtins.listToAttrs (
-  map (name: {
-    inherit name;
-    value = import (./. + "/${name}");
-  }) moduleNames
-)
+modules // { default.imports = builtins.attrValues modules; }

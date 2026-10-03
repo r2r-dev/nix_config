@@ -1,36 +1,13 @@
 {
   pkgs,
-  outputs,
+  inputs,
   ...
 }:
 {
-  imports = with outputs.nixosModules; [
-    impermanence
-    homeassistant
-    gow_wolf
-    bluetooth
-    boot
-    desktop
-    fans
-    ios
-    kernel
-    locale
-    network
-    nix
-    no_suspend
-    nvidia
-    performance
-    #prompter broken on 6.18.1-zen-dev
-    rgb
-    secrets
-    sound
-    ssh
-    steam
-    users
-    xbox
-    zerotier
-    wol
+  nixpkgs.overlays = [ inputs.proton-cachyos.overlays.default ];
 
+  imports = [
+    inputs.nur.modules.nixos.default
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
@@ -150,7 +127,7 @@
     { pkgs, ... }:
     {
       imports = [
-        outputs.homeManagerModules.r2r
+        inputs.self.homeManagerModules.r2r
         ./persistence.nix
       ];
       home.packages = with pkgs; [

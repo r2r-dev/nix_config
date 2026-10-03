@@ -54,79 +54,53 @@
   outputs =
     {
       self,
+      nixpkgs,
       agenix,
       chaotic,
-      nixpkgs,
-      nix-flatpak,
-      nixos-hardware,
-      jovian-nixos,
       home-manager,
       impermanence,
+      jovian-nixos,
       outoftree,
-      proton-cachyos,
-      nur,
-      noctalia,
       ...
     }@inputs:
     let
-      inherit (self) outputs;
-      inherit inputs;
-
+      inherit (nixpkgs) lib;
       system = "x86_64-linux";
-
-      myOverlays = import ./overlays {
-        inherit outoftree system;
-      };
 
       # Modules shared by every host.
       commonModules = [
-        {
-          nixpkgs.overlays = [ myOverlays ];
-          nixpkgs.config.allowUnfree = true;
-        }
+        (
+          { pkgs, ... }:
+          {
+            nixpkgs.overlays = [ (import ./overlays { inherit outoftree system; }) ];
+            nixpkgs.config.allowUnfree = true;
+            environment.systemPackages = [
+              agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+            ];
+          }
+        )
         agenix.nixosModules.default
         chaotic.nixosModules.default
         jovian-nixos.nixosModules.default
         home-manager.nixosModules.home-manager
         impermanence.nixosModules.impermanence
-        {
-          environment.systemPackages = [
-            agenix.packages.${system}.default
-          ];
-        }
+        self.nixosModules.default
       ];
 
-      # Build a NixOS configuration for the host named `name`, adding any
-      # host-specific modules on top of the shared set.
-      mkSystem =
-        name: extraModules:
-        nixpkgs.lib.nixosSystem {
+      # Every directory in ./hosts is a host; its name is the attribute name.
+      mkHost =
+        name: path:
+        lib.nixosSystem {
           inherit system;
-          specialArgs = {
-            inherit
-              system
-              outoftree
-              outputs
-              inputs
-              ;
-          };
-          modules = commonModules ++ extraModules ++ [ ./machines/${name} ];
+          specialArgs = { inherit inputs outoftree; };
+          modules = commonModules ++ [ path ];
         };
     in
     {
       nixosModules = import ./modules/nixos;
       homeManagerModules = import ./modules/home;
 
-      nixosConfigurations = {
-        annata = mkSystem "annata" [
-          nixos-hardware.nixosModules.gpd-pocket-4
-          nix-flatpak.nixosModules.nix-flatpak
-        ];
-        samsara = mkSystem "samsara" [
-          { nixpkgs.overlays = [ proton-cachyos.overlays.default ]; }
-          nur.modules.nixos.default
-        ];
-      };
+      nixosConfigurations = lib.mapAttrs mkHost (import ./lib/import-dir.nix ./hosts);
 
       # `nix fmt` formats the tree (nixfmt, 80 columns); `nix fmt -- --ci` only checks it.
       formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree.override {
@@ -135,7 +109,7 @@
 
       # `nix flake check` evaluates every host; `nix build .#checks.<system>.<host>`
       # builds its full system closure.
-      checks.${system} = nixpkgs.lib.mapAttrs (
+      checks.${system} = lib.mapAttrs (
         _: host: host.config.system.build.toplevel
       ) self.nixosConfigurations;
     };
