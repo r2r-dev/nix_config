@@ -36,6 +36,7 @@
       sound.jack = true;
     };
 
+    gaming.wine.enable = true;
     gaming.session = {
       width = 2560;
       height = 1600;
@@ -49,18 +50,7 @@
 
   home-manager.users.${config.my.user.name} = ./home.nix;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    git
-    gnome-software
-    kubectl
-    vim
-    winetricks
-    wineWow64Packages.stable
-    wine64
-    waypipe
-  ];
+  environment.systemPackages = [ pkgs.vim ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

@@ -1,8 +1,5 @@
 # Home-manager configuration of the primary user on samsara.
-{ pkgs, ... }:
-{
-  home.packages = with pkgs; [ git ];
-
+_: {
   # $HOME state kept on the persistent volume that no module covers.
   # (Modules add their own: Plasma, Steam, Firefox, ssh/gpg, XDG dirs, ...)
   my.persist = {

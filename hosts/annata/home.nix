@@ -4,10 +4,12 @@
   home.packages = with pkgs; [
     coder
     discord
+    kubectl
     openscad-unstable
     plasticity
     proton-vpn
     signal-desktop
     sshx # TODO ssh module
+    waypipe
   ];
 }

@@ -185,6 +185,10 @@ in
       # Enable Docker
       virtualisation.docker = {
         enable = true;
+        # Use btrfs subvolumes/snapshots for images when / is on btrfs.
+        storageDriver = lib.mkIf (
+          config.fileSystems."/".fsType or null == "btrfs"
+        ) "btrfs";
         #enableNvidia = true;
       };
       #hardware.nvidia-container-toolkit.enable = true;

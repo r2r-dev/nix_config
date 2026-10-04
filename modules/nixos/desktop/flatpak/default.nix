@@ -17,6 +17,8 @@ in
     xdg.portal.enable = true;
     xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     services.flatpak.enable = true;
+    # Graphical store for browsing and installing Flathub apps.
+    environment.systemPackages = [ pkgs.gnome-software ];
     systemd.services.flatpak-repo = {
       wantedBy = [ "multi-user.target" ];
       path = [ pkgs.flatpak ];

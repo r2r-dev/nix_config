@@ -4,6 +4,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -22,6 +23,9 @@ in
         "/var/lib/nixos"
       ];
     };
+    # Flakes fetch git inputs and read git working trees.
+    environment.systemPackages = [ pkgs.git ];
+
     nix.settings.experimental-features = [
       "nix-command"
       "flakes"

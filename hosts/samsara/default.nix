@@ -67,8 +67,6 @@
     };
   };
 
-  virtualisation.docker.storageDriver = "btrfs";
-
   hardware.enableAllFirmware = true; # ?rgb?
 
   environment.systemPackages = with pkgs; [
