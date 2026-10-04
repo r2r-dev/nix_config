@@ -36,6 +36,11 @@ in
     boot.kernelModules = [
       "i2c-piix4" # secondary i2c sensor - for rgb?
     ];
+    home-manager.users.${config.my.user.name}.my.persist.files =
+      lib.mkIf config.my.persist.enable
+        [
+          ".config/OpenRGB/OpenRGB.json"
+        ];
     users.groups.i2c.members = [ config.my.user.name ]; # openrgb: i2c access for the primary user
   };
 }

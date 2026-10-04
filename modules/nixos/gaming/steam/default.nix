@@ -26,6 +26,14 @@ in
       vulkan-tools
     ];
 
+    # Steam installs games and its runtime into $HOME.
+    home-manager.users.${config.my.user.name}.my.persist.directories =
+      lib.mkIf config.my.persist.enable
+        [
+          { directory = ".steam"; }
+          { directory = ".local/share/Steam"; }
+        ];
+
     # https://github.com/NixOS/nixpkgs/issues/351516
     services.ananicy = {
       enable = true;

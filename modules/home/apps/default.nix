@@ -19,5 +19,12 @@
       eden
       keepassxc
     ];
+    my.persist.directories = [
+      # XXX: Is this really necessary to persist?
+      ".cache/mozilla" # Firefox local cache.
+      ".mozilla" # Firefox config/local state.
+      ".config/eden"
+      ".local/share/eden"
+    ];
   };
 }

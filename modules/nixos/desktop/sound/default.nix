@@ -21,6 +21,12 @@ in
 
   config = lib.mkIf cfg.enable {
     services.pulseaudio.enable = false;
+    home-manager.users.${config.my.user.name}.my.persist =
+      lib.mkIf config.my.persist.enable
+        {
+          directories = [ ".local/state/wireplumber" ]; # volumes, default devices
+          files = [ ".config/pulse/cookie" ];
+        };
     security.rtkit.enable = true;
 
     services.pipewire = {
