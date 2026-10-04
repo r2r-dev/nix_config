@@ -88,15 +88,25 @@
       ];
 
       # Every directory in ./hosts is a host; its name is the attribute name.
+      # hosts/<name>/home.nix, if present, is the primary user's
+      # home-manager config on that host.
       mkHost =
         name: path:
         lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs; };
-          modules = commonModules ++ [
-            { networking.hostName = name; }
-            path
-          ];
+          modules =
+            commonModules
+            ++ [
+              { networking.hostName = name; }
+              path
+            ]
+            ++ lib.optional (builtins.pathExists (path + "/home.nix")) (
+              { config, ... }:
+              {
+                home-manager.users.${config.my.user.name} = path + "/home.nix";
+              }
+            );
         };
     in
     {

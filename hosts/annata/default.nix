@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   inputs,
   ...
@@ -47,8 +46,6 @@
 
   programs.kdeconnect.enable = true;
   hardware.ledger.enable = true;
-
-  home-manager.users.${config.my.user.name} = ./home.nix;
 
   environment.systemPackages = [ pkgs.vim ];
 

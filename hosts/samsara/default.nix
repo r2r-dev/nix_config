@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   inputs,
   ...
@@ -72,8 +71,6 @@
   environment.systemPackages = with pkgs; [
     nur.repos.xddxdd.uncategorized.vk-hdr-layer
   ];
-
-  home-manager.users.${config.my.user.name} = ./home.nix;
 
   system.stateVersion = "24.11";
 }
