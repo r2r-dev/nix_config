@@ -30,6 +30,7 @@
 
     desktop = {
       noctalia.enable = true;
+      cursor.enable = true;
       flatpak.enable = true;
       printing.enable = true;
       sound.jack = true;
@@ -48,17 +49,9 @@
 
   home-manager.users.${config.my.user.name} = ./home.nix;
 
-  services.displayManager.noctalia-greeter = {
-    passwordlessSyncUsers = [ config.my.user.name ];
-    settings = {
-      appearance.hide_logo = true;
-    };
-  };
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    kitty
     git
     gnome-software
     kubectl
@@ -67,7 +60,6 @@
     wineWow64Packages.stable
     wine64
     waypipe
-    xwayland-satellite
   ];
 
   # This value determines the NixOS release from which the default

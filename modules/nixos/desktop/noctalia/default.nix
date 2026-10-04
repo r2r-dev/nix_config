@@ -1,7 +1,11 @@
+# Noctalia: Hyprland with the noctalia shell and greeter. The noctalia
+# home-manager module is made available to the primary user
+# (programs.noctalia in their home config).
 {
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 let
@@ -22,11 +26,21 @@ in
     };
     services.displayManager.noctalia-greeter = {
       enable = true;
+      passwordlessSyncUsers = [ config.my.user.name ];
       settings = {
-        cursor.size = 24;
+        appearance.hide_logo = lib.mkDefault true;
         keyboard.layout = config.my.keyboard.layout;
-        path = "${pkgs.graphite-cursors}/share/icons";
       };
     };
+
+    # Terminal used by the Hyprland config; X11 apps under the session.
+    environment.systemPackages = with pkgs; [
+      kitty
+      xwayland-satellite
+    ];
+
+    home-manager.users.${config.my.user.name}.imports = [
+      inputs.noctalia.homeModules.default
+    ];
   };
 }
