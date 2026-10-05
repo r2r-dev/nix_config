@@ -45,26 +45,16 @@ in
       # runs, trimming launch latency/stutter.
       nvidiaPersistenced = true;
 
-      # Pinned driver (https://www.nvidia.com/en-us/drivers/unix/,
-      # https://github.com/NixOS/nixpkgs/blob/master/pkgs/os-specific/linux/nvidia-x11/default.nix).
-      #
-      # 610.57.04 rather than 615.71.09 (nixpkgs' new_feature): 615.71.09
-      # regressed on DisplayPort - pixel corruption/vertical lines and GSP
-      # hangs on modeset/hotplug, fixed by going back to 610.57.04:
+      # nixpkgs' production branch (595.x) rather than a pinned 610/615:
+      # since 610.57.04 the driver produces scan-out corruption (vertical
+      # bands, worst while the Steam UI repaints) in gamescope's DRM backend
+      # at 4K modes; lower resolutions and 575-595 drivers are clean, and
+      # 610.43.02 (the last good pin here) no longer builds on kernel 7.2.
+      # https://github.com/ValveSoftware/gamescope/issues/2309
+      # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/1224
+      # 615.71.09 additionally regressed on DisplayPort:
       # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/1367
-      # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/1392
-      # (610.43.02 does not build on kernel 7.2:
-      # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/1224)
-      # Fallback if this fails to build on a newer kernel:
-      #   config.boot.kernelPackages.nvidiaPackages.production
-      package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-        version = "610.57.04";
-        sha256_64bit = "sha256-suk1xmuDuwDAyFe8jg7g/VLekoa0DJzB7sKafOfrEW0=";
-        sha256_aarch64 = "sha256-QCefrMBCmpOwuOyXv1k5Gj0iB2CYlPgnG3JToUw/j54=";
-        openSha256 = "sha256-rQHOOOY4KL92Ww3KDwh+j4eGU7oNAH8LutZC5wmFnPo=";
-        settingsSha256 = "sha256-ZEMo8I8Zc2Tq6RVDNYpAH+f094dUaZiBqO+5f6lIjRI=";
-        persistencedSha256 = "sha256-aXmD2VY1RLlgAnlHhOUMWzvMyhI6JTClcFLm4imF/mA=";
-      };
+      package = config.boot.kernelPackages.nvidiaPackages.production;
     };
   };
 }
