@@ -13,6 +13,22 @@ in
       default = config.my.hardware.gpu == "nvidia";
       defaultText = lib.literalExpression ''config.my.hardware.gpu == "nvidia"'';
     };
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = config.boot.kernelPackages.nvidiaPackages.latest;
+      defaultText = lib.literalExpression "config.boot.kernelPackages.nvidiaPackages.latest";
+      description = ''
+        Driver package. Defaults to the newest driver nixpkgs ships for the
+        host's kernel (the higher of the production and new-feature
+        branches), so it moves forward with flake.lock.
+
+        Known issue (Oct 2026): 610.57.04 and newer corrupt the screen in
+        gamescope's DRM backend at 4K (gamescope#2309); 615.71.09 also
+        regressed on some DisplayPort setups
+        (open-gpu-kernel-modules#1367, #1392). If that bites, use
+        `config.boot.kernelPackages.nvidiaPackages.production` here.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -45,16 +61,7 @@ in
       # runs, trimming launch latency/stutter.
       nvidiaPersistenced = true;
 
-      # nixpkgs' production branch (595.x) rather than a pinned 610/615:
-      # since 610.57.04 the driver produces scan-out corruption (vertical
-      # bands, worst while the Steam UI repaints) in gamescope's DRM backend
-      # at 4K modes; lower resolutions and 575-595 drivers are clean, and
-      # 610.43.02 (the last good pin here) no longer builds on kernel 7.2.
-      # https://github.com/ValveSoftware/gamescope/issues/2309
-      # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/1224
-      # 615.71.09 additionally regressed on DisplayPort:
-      # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/1367
-      package = config.boot.kernelPackages.nvidiaPackages.production;
+      inherit (cfg) package;
     };
   };
 }
