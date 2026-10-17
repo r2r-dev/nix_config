@@ -63,7 +63,7 @@
 
     services = {
       remotePower.enable = true;
-      wolf.enable = true;
+      wolf.enable = false;
       zerotier.puqu.enable = true;
     };
   };
