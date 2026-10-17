@@ -34,6 +34,8 @@
 
   boot.kernelParams = [
     "pci=realloc" # enable dynamic pci allocation to handle 14+ usb ports
+    "nvme_core.default_ps_max_latency_us=0"
+    "pcie_aspm=off" # disable asynchronous power management
   ];
   hardware.cpu.amd.updateMicrocode = true;
 
