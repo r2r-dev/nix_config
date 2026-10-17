@@ -6,11 +6,14 @@
 {
   config,
   lib,
+  utils,
   ...
 }:
 let
   cfg = config.my.persist;
   entry = lib.types.either lib.types.str lib.types.attrs;
+  # systemd's unit for the block device, e.g. dev-mapper-pool0n0\x2ddecrypted.device
+  rollbackDevice = "${utils.escapeSystemdPath cfg.rollback.device}.device";
 in
 {
   options.my.persist = {
@@ -87,7 +90,13 @@ in
             wantedBy = [
               "initrd.target"
             ];
+            # Wait for the pool to be unlocked/appear (LUKS with a key file
+            # on USB can take a moment); without this the service could run
+            # before the device existed and fail, leaving the old root in
+            # place for that boot.
+            requires = [ rollbackDevice ];
             after = [
+              rollbackDevice
               "create-needed-for-boot-dirs.service"
             ];
             before = [
