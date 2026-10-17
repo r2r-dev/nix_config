@@ -18,6 +18,17 @@ in
       '';
     };
     disableMitigations = lib.mkEnableOption "disabling CPU security mitigations";
+    splitLockDetect = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Keep the kernel's split-lock detection. By default it is turned off:
+        in its default "warn" mode the kernel deliberately stalls any thread
+        that does a misaligned locked operation, which Steam/CEF and some
+        Windows games do constantly ("x86/split lock detection: #DB ... took a
+        bus_lock trap" in the journal), causing stutter.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -27,7 +38,9 @@ in
       scheduler = cfg.scheduler;
     };
 
-    boot.kernelParams = lib.optional cfg.disableMitigations "mitigations=off";
+    boot.kernelParams =
+      lib.optional cfg.disableMitigations "mitigations=off"
+      ++ lib.optional (!cfg.splitLockDetect) "split_lock_detect=off";
     #faster-than-fsync Proton synchronisation
     boot.kernelModules = [ "ntsync" ];
 

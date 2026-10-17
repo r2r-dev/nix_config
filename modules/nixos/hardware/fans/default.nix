@@ -48,5 +48,9 @@ in
     ];
 
     programs.coolercontrol.enable = true;
+
+    # Fan curves, profiles and alerts live here; on an impermanent root they
+    # were recreated (and could be left truncated) on every boot.
+    my.persist.directories = [ "/etc/coolercontrol" ];
   };
 }
