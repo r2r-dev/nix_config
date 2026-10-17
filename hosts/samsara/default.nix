@@ -31,6 +31,8 @@
 
     hardware = {
       gpu = "nvidia";
+      # 4K gamescope session corrupts without it (see the option).
+      nvidia.contiguousVram = true;
       # displaylink left off: broken on 6.18.1-zen-dev
       fans = {
         enable = true;

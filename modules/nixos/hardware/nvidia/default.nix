@@ -1,4 +1,5 @@
-# NVIDIA: proprietary/open NVIDIA driver setup with a pinned driver version.
+# NVIDIA: the NVIDIA driver (open kernel modules), following nixpkgs'
+# newest driver unless a host picks another package.
 {
   config,
   lib,
@@ -6,6 +7,25 @@
 }:
 let
   cfg = config.my.hardware.nvidia;
+
+  # The open kernel modules with open-gpu-kernel-modules PR #1305, which
+  # makes the RMDisableNoncontigAlloc registry key apply to the memory
+  # allocator used on current GPUs (without it the key does nothing).
+  withContiguousVram =
+    pkg:
+    pkg.overrideAttrs (old: {
+      passthru = old.passthru // {
+        open = old.passthru.open.overrideAttrs (o: {
+          patches = (o.patches or [ ]) ++ [ ./rmdisablenoncontigalloc-pma.patch ];
+        });
+      };
+    });
+
+  registryDwords = [
+    "RMUseSwI2c=0x01"
+    "RMI2cSpeed=100"
+  ]
+  ++ lib.optional cfg.contiguousVram "RMDisableNoncontigAlloc=1";
 in
 {
   options.my.hardware.nvidia = {
@@ -13,6 +33,7 @@ in
       default = config.my.hardware.gpu == "nvidia";
       defaultText = lib.literalExpression ''config.my.hardware.gpu == "nvidia"'';
     };
+
     package = lib.mkOption {
       type = lib.types.package;
       default = config.boot.kernelPackages.nvidiaPackages.latest;
@@ -20,24 +41,38 @@ in
       description = ''
         Driver package. Defaults to the newest driver nixpkgs ships for the
         host's kernel (the higher of the production and new-feature
-        branches), so it moves forward with flake.lock.
+        branches), so it moves forward with flake.lock. Use
+        `config.boot.kernelPackages.nvidiaPackages.production` here when a
+        release misbehaves.
+      '';
+    };
 
-        Known issue (Oct 2026): 610.57.04 and newer corrupt the screen in
-        gamescope's DRM backend at 4K (gamescope#2309); 615.71.09 also
-        regressed on some DisplayPort setups
-        (open-gpu-kernel-modules#1367, #1392). If that bites, use
-        `config.boot.kernelPackages.nvidiaPackages.production` here.
+    contiguousVram = lib.mkEnableOption "contiguous video memory allocations" // {
+      description = ''
+        Work around corrupted output in gamescope's DRM backend at large
+        modes (4K, HDR, 5120x1440...): the display engine cannot scan out
+        buffers that are scattered in video memory, and gamescope's
+        Vulkan-allocated scan-out surfaces can be (gamescope#1593, #2309).
+        Sets the `RMDisableNoncontigAlloc=1` registry key and patches the
+        open kernel modules so it takes effect (open-gpu-kernel-modules
+        PR #1305)
       '';
     };
   };
 
   config = lib.mkIf cfg.enable {
-    # https://github.com/TLATER/dotfiles/blob/96c43068c47b1234d776b0d7366818eb04533c67/nixos-modules/nvidia/default.nix#L103
+    assertions = [
+      {
+        assertion = cfg.contiguousVram -> config.hardware.nvidia.open;
+        message = "my.hardware.nvidia.contiguousVram needs the open kernel modules.";
+      }
+    ];
+
     boot.extraModprobeConfig =
       let
         options = [
           "NVreg_UsePageAttributeTable=1"
-          "NVreg_RegistryDwords=RMUseSwI2c=0x01;RMI2cSpeed=100"
+          "NVreg_RegistryDwords=${lib.concatStringsSep ";" registryDwords}"
         ];
       in
       "options nvidia ${lib.concatStringsSep " " options}";
@@ -61,7 +96,8 @@ in
       # runs, trimming launch latency/stutter.
       nvidiaPersistenced = true;
 
-      inherit (cfg) package;
+      package =
+        if cfg.contiguousVram then withContiguousVram cfg.package else cfg.package;
     };
   };
 }
