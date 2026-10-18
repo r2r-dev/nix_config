@@ -9,7 +9,6 @@
     plasticity
     proton-vpn
     signal-desktop
-    sshx # TODO ssh module
     waypipe
   ];
 }

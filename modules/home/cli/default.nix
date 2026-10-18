@@ -10,14 +10,10 @@
 
   config = lib.mkIf config.my.cli.enable {
     programs.vim.enable = true;
-    my.persist.directories = [
-      ".gnupg"
-      ".ssh"
-    ];
+    my.persist.directories = [ ".gnupg" ];
     home.packages = with pkgs; [
       nixfmt
       python3
-      sshfs # TODO ssh module
     ];
   };
 }

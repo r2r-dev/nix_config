@@ -17,6 +17,7 @@
       lib.mapAttrsRecursive (_: lib.mkDefault)
         {
           cli.enable = true;
+          ssh.enable = true;
           apps.enable = true;
         };
   };
