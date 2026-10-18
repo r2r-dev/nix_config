@@ -18,6 +18,7 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.hyprland.enable = true;
+    programs.hyprland.withUWSM = true;
     programs.noctalia = {
       enable = true;
 
