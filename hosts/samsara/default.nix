@@ -65,5 +65,12 @@
 
   hardware.enableAllFirmware = true; # ?rgb?
 
+  boot.kernelParams = [
+    "pci=realloc" # enable dynamic pci allocation to handle 14+ usb ports
+    # NVMe power saving workaround
+    "nvme_core.default_ps_max_latency_us=0"
+    "pcie_aspm=off" # disable asynchronous power management
+  ];
+
   system.stateVersion = "24.11";
 }

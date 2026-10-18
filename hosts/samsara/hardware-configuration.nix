@@ -32,13 +32,6 @@
     extraModulePackages = [ ];
   };
 
-  boot.kernelParams = [
-    "pci=realloc" # enable dynamic pci allocation to handle 14+ usb ports
-    "nvme_core.default_ps_max_latency_us=0"
-    "pcie_aspm=off" # disable asynchronous power management
-  ];
-  hardware.cpu.amd.updateMicrocode = true;
-
   boot.initrd.luks.devices = {
     "pool0n0-decrypted" = {
       device = "/dev/disk/by-uuid/ff2679c1-748d-4959-b933-b041c08e6bdc";
