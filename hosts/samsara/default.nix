@@ -1,14 +1,9 @@
-{
-  pkgs,
-  inputs,
-  ...
-}:
+{ inputs, ... }:
 {
   nixpkgs.overlays = [ inputs.proton-cachyos.overlays.default ];
 
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate # microcode + amd_pstate
-    inputs.nur.modules.nixos.default
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
@@ -69,10 +64,6 @@
   };
 
   hardware.enableAllFirmware = true; # ?rgb?
-
-  environment.systemPackages = with pkgs; [
-    nur.repos.xddxdd.uncategorized.vk-hdr-layer
-  ];
 
   system.stateVersion = "24.11";
 }

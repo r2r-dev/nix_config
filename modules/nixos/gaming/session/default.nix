@@ -3,12 +3,16 @@
 {
   config,
   lib,
+  pkgs,
+  inputs,
   ...
 }:
 let
   cfg = config.my.gaming.session;
 in
 {
+  imports = [ inputs.nur.modules.nixos.default ];
+
   options.my.gaming.session = {
     enable = lib.mkEnableOption "the gamescope Steam session";
     autoLogin = {
@@ -49,6 +53,12 @@ in
         message = "my.gaming.session requires my.gaming.steam.";
       }
     ];
+
+    # make vulkan games output hdr through gamescope on nvidia
+    # where wayland path does not expose it
+    environment.systemPackages = lib.optional (
+      cfg.hdr && config.my.hardware.gpu == "nvidia"
+    ) pkgs.nur.repos.xddxdd.uncategorized.vk-hdr-layer;
 
     programs.steam.gamescopeSession = {
       enable = true; # Integrates with programs.steam
