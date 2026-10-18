@@ -1,7 +1,16 @@
 # Core: always-on basics for every home-manager user.
-{ lib, ... }:
+{ lib, osConfig, ... }:
 {
   programs.bash.enable = true;
+
+  # drops the user old home-manager generations the same way as
+  # the root profiles
+  nix.gc = lib.mkIf osConfig.my.nix.gc.enable {
+    automatic = true;
+    dates = "weekly";
+    randomizedDelaySec = "45min";
+    options = "--delete-older-than ${osConfig.my.nix.gc.keep}";
+  };
 
   my.persist = {
     directories = [
