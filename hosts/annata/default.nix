@@ -6,7 +6,6 @@
 {
   imports = [
     inputs.nixos-hardware.nixosModules.gpd-pocket-4
-    inputs.nix-flatpak.nixosModules.nix-flatpak
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
@@ -30,9 +29,16 @@
     desktop = {
       noctalia.enable = true;
       cursor.enable = true;
-      flatpak.enable = true;
       printing.enable = true;
       sound.jack = true;
+      flatpak = {
+        enable = true;
+        pruneUnmanaged = true;
+        packages = [
+          "com.bambulab.BambuStudio"
+          "com.github.IsmaelMartinez.teams_for_linux"
+        ];
+      };
     };
 
     gaming.wine.enable = true;
