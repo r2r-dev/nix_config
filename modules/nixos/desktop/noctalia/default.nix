@@ -34,6 +34,21 @@ in
       };
     };
 
+    # hyprland for screen capture and screenshots
+    # gtk for everything else
+    xdg.portal = {
+      enable = true;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      config.hyprland = {
+        default = [
+          "hyprland"
+          "gtk"
+        ];
+        "org.freedesktop.impl.portal.ScreenCast" = [ "hyprland" ];
+        "org.freedesktop.impl.portal.Screenshot" = [ "hyprland" ];
+      };
+    };
+
     # Terminal used by the Hyprland config; X11 apps under the session.
     environment.systemPackages = with pkgs; [
       kitty
