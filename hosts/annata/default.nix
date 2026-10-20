@@ -30,6 +30,7 @@
       noctalia.enable = true;
       cursor.enable = true;
       obs.enable = true;
+      remoteApps.enable = true;
       printing.enable = true;
       sound.jack = true;
       flatpak = {

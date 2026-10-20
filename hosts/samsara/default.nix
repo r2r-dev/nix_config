@@ -41,7 +41,10 @@
       };
     };
 
-    desktop.plasma.enable = true;
+    desktop = {
+      plasma.enable = true;
+      remoteApps.enable = true;
+    };
 
     gaming = {
       performance = {

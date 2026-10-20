@@ -9,6 +9,5 @@
     plasticity
     proton-vpn
     signal-desktop
-    waypipe
   ];
 }
