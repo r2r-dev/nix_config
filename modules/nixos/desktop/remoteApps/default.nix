@@ -32,6 +32,7 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
       pkgs.xwayland-satellite
+      pkgs.waypipe
       remote-app
     ];
   };
