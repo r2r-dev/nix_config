@@ -9,6 +9,20 @@
 }:
 let
   cfg = config.my.gaming.session;
+
+  # stop/start the auto-logged-in session (display manager)
+  steam-session = pkgs.writeShellApplication {
+    name = "steam-session";
+    text = ''
+      case "''${1:-}" in
+        stop | start | status) exec systemctl "$1" display-manager.service ;;
+        *)
+          echo "usage: steam-session stop|start|status" >&2
+          exit 1
+          ;;
+      esac
+    '';
+  };
 in
 {
   imports = [ inputs.nur.modules.nixos.default ];
@@ -56,9 +70,11 @@ in
 
     # make vulkan games output hdr through gamescope on nvidia
     # where wayland path does not expose it
-    environment.systemPackages = lib.optional (
-      cfg.hdr && config.my.hardware.gpu == "nvidia"
-    ) pkgs.nur.repos.xddxdd.uncategorized.vk-hdr-layer;
+    environment.systemPackages =
+      lib.optional (
+        cfg.hdr && config.my.hardware.gpu == "nvidia"
+      ) pkgs.nur.repos.xddxdd.uncategorized.vk-hdr-layer
+      ++ lib.optional cfg.autoLogin.enable steam-session;
 
     programs.steam.gamescopeSession = {
       enable = true; # Integrates with programs.steam
@@ -95,5 +111,15 @@ in
         defaultSession = lib.mkForce "steam";
       };
     };
+
+    security.polkit.extraConfig = lib.mkIf cfg.autoLogin.enable ''
+      polkit.addRule(function (action, subject) {
+        if (action.id == "org.freedesktop.systemd1.manage-units" &&
+            action.lookup("unit") == "display-manager.service" &&
+            subject.user == "${cfg.autoLogin.user}") {
+          return polkit.Result.YES;
+        }
+      });
+    '';
   };
 }

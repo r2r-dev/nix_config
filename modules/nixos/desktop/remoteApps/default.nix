@@ -19,8 +19,27 @@ let
       host=$1
       shift
       # shellcheck disable=SC2086
-      exec waypipe ''${WAYPIPE_OPTS:---video h264,hw --compress lz4} \
+      exec waypipe ''${WAYPIPE_OPTS:---no-gpu --compress lz4} \
         --xwls ssh "$host" "$@"
+    '';
+  };
+
+  # hijack hosts steam
+  remote-steam = pkgs.writeShellApplication {
+    name = "remote-steam";
+    runtimeInputs = [
+      remote-app
+      pkgs.openssh
+    ];
+    text = ''
+      if [ $# -ne 1 ]; then
+        echo "usage: remote-steam <ssh-host>" >&2
+        exit 1
+      fi
+      host=$1
+      ssh "$host" steam-session stop
+      trap 'ssh "$host" steam-session start' EXIT
+      remote-app "$host" steam
     '';
   };
 in
@@ -34,6 +53,7 @@ in
       pkgs.xwayland-satellite
       pkgs.waypipe
       remote-app
+      remote-steam
     ];
   };
 }
