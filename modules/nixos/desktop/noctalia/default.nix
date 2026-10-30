@@ -51,7 +51,7 @@ in
 
     # Terminal used by the Hyprland config; X11 apps under the session.
     environment.systemPackages = with pkgs; [
-      kitty
+      ghostty
       xwayland-satellite
     ];
 
