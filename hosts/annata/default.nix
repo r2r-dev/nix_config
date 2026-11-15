@@ -52,6 +52,8 @@
     services.remotePower.enable = true;
   };
 
+  services.fwupd.enable = true;
+  services.hardware.bolt.enable = true;
   programs.kdeconnect.enable = true;
   hardware.ledger.enable = true;
 
