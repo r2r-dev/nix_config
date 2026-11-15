@@ -15,16 +15,19 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    users.users.${config.my.user.name}.packages = with pkgs; [
-      bottles
-      gamescope
-      gamescope-wsi
-      mangohud
-      moonlight-qt
-      steamtinkerlaunch
-      #lutris # blocked by https://github.com/NixOS/nixpkgs/pull/454074
-      vulkan-tools
-    ];
+    users.users.${config.my.user.name} = {
+      extraGroups = [ "input" ];
+      packages = with pkgs; [
+        bottles
+        gamescope
+        gamescope-wsi
+        mangohud
+        moonlight-qt
+        steamtinkerlaunch
+        #lutris # blocked by https://github.com/NixOS/nixpkgs/pull/454074
+        vulkan-tools
+      ];
+    };
 
     # Steam installs games and its runtime into $HOME.
     home-manager.users.${config.my.user.name}.my.persist.directories =
@@ -55,6 +58,11 @@ in
       steam = {
         enable = true;
         protontricks.enable = true;
+        package = pkgs.steam.override {
+          extraEnv = {
+            LD_PRELOAD = "${pkgs.pkgsi686Linux.extest}/lib/libextest.so:${pkgs.extest}/lib/libextest.so";
+          };
+        };
         extraPackages =
           with pkgs;
           [
