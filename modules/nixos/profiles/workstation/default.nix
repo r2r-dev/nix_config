@@ -13,6 +13,10 @@
       desktop.sound.enable = true;
     };
 
+    # firmware updates, thunderbolt authorisation
+    services.fwupd.enable = lib.mkDefault true;
+    services.hardware.bolt.enable = lib.mkDefault true;
+
     home-manager.users.${config.my.user.name}.my =
       lib.mapAttrsRecursive (_: lib.mkDefault)
         {
