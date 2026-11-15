@@ -101,15 +101,12 @@ in
       ];
     };
 
-    services = lib.mkIf cfg.autoLogin.enable {
-      getty.autologinUser = cfg.autoLogin.user;
-      displayManager = {
-        autoLogin = {
-          enable = true;
-          user = cfg.autoLogin.user;
-        };
-        defaultSession = lib.mkForce "steam";
+    services.displayManager = lib.mkIf cfg.autoLogin.enable {
+      autoLogin = {
+        enable = true;
+        user = cfg.autoLogin.user;
       };
+      defaultSession = lib.mkForce "steam";
     };
 
     security.polkit.extraConfig = lib.mkIf cfg.autoLogin.enable ''
