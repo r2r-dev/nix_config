@@ -11,8 +11,7 @@
   config = lib.mkIf config.my.gaming.wine.enable {
     environment.systemPackages = with pkgs; [
       winetricks
-      wineWow64Packages.stable
-      wine64
+      wineWow64Packages.stableFull
     ];
   };
 }
