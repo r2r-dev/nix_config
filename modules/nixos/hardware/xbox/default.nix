@@ -2,7 +2,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -14,13 +13,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.udev.packages = [
-      (pkgs.writeTextFile {
-        name = "xbox-one-elite-2-udev-rules";
-        text = ''KERNEL=="hidraw*", TAG+="uaccess"'';
-        destination = "/etc/udev/rules.d/60-xbox-elite-2-hid.rules";
-      })
-    ];
     hardware.xpadneo.enable = true; # Enable the xpadneo driver for Xbox One wireless controllers
     boot = {
       kernelModules = [
