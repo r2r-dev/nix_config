@@ -11,7 +11,6 @@ _: {
       ".local/share/bookeeper" # bg3 mod manager
       ".local/share/direnv"
       ".local/share/keyrings"
-      ".nixops"
     ];
     files = [
       ".config/coderv2/session"
