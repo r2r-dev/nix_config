@@ -14,7 +14,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Enable Bluetooth
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;

@@ -77,20 +77,11 @@ in
       in
       "options nvidia ${lib.concatStringsSep " " options}";
 
-    # Load nvidia driver for Xorg and Wayland
-    services.xserver.videoDrivers = [
-      "nvidia"
-    ];
+    services.xserver.videoDrivers = [ "nvidia" ];
     hardware.nvidia = {
-      # This will no longer be necessary when
-      # https://github.com/NixOS/nixpkgs/pull/326369 hits stable
       modesetting.enable = lib.mkDefault true;
-      # Power management is nearly always required to get nvidia GPUs to
-      # behave on suspend, due to firmware bugs.
-      powerManagement.enable = true;
-      # The open driver is recommended by nvidia now, see
-      # https://download.nvidia.com/XFree86/Linux-x86_64/565.57.01/README/kernel_open.html
-      open = true; # not with 6.15 patch
+      powerManagement.enable = true; # suspend/resume
+      open = true;
 
       # Keep the driver resident so the GPU does not re-initialise between
       # runs, trimming launch latency/stutter.

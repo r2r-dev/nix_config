@@ -31,9 +31,7 @@ in
     };
     networking.firewall.allowedTCPPorts = lib.optional cfg.openFirewall 6742;
     hardware.i2c.enable = true;
-    environment.systemPackages = with pkgs; [
-      i2c-tools # openrgb
-    ];
+    environment.systemPackages = [ pkgs.i2c-tools ];
     boot.kernelModules = [
       "i2c-piix4" # secondary i2c sensor - for rgb?
     ];
@@ -42,6 +40,6 @@ in
         [
           ".config/OpenRGB/OpenRGB.json"
         ];
-    users.groups.i2c.members = [ config.my.user.name ]; # openrgb: i2c access for the primary user
+    users.groups.i2c.members = [ config.my.user.name ];
   };
 }

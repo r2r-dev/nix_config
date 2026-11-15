@@ -16,10 +16,7 @@ in
   config = lib.mkIf cfg.enable {
     boot = {
       loader = {
-        # Hide the OS choice for bootloaders.
-        # It's still possible to open the bootloader list by pressing any key
-        # It will just not appear on screen unless a key is pressed
-        timeout = 0;
+        timeout = 0; # menu only on keypress
         efi = {
           canTouchEfiVariables = true;
         };
@@ -43,14 +40,12 @@ in
         enable = true;
         theme = "deus_ex";
         themePackages = with pkgs; [
-          # By default we would install all themes
           (adi1090x-plymouth-themes.override {
             selected_themes = [ "deus_ex" ];
           })
         ];
       };
 
-      # Enable "Silent Boot"
       consoleLogLevel = 0;
 
       initrd.verbose = false;

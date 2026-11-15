@@ -77,7 +77,7 @@ in
       ++ lib.optional cfg.autoLogin.enable steam-session;
 
     programs.steam.gamescopeSession = {
-      enable = true; # Integrates with programs.steam
+      enable = true;
       args = [
         "-W ${toString cfg.width}"
         "-H ${toString cfg.height}"

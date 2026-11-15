@@ -4,7 +4,6 @@
 
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate # microcode + amd_pstate
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
 

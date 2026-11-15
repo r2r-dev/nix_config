@@ -20,15 +20,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-
-    # Network settings for WoL
     networking = {
       interfaces.${cfg.interface} = {
         wakeOnLan.enable = true;
       };
     };
 
-    # Systemd service to enable WoL
+    # re-arm after sleep
     systemd.services.enable-wol = {
       description = "Enable Wake-on-LAN";
       after = [

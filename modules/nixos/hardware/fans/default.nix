@@ -44,7 +44,7 @@ in
       coolercontrol.coolercontrold
       #coolercontrol.coolercontrol-liqctld
       liquidctl
-      lm_sensors # tools and drivers for monitoring temperatures, voltage, and fans
+      lm_sensors
     ];
 
     programs.coolercontrol.enable = true;

@@ -13,10 +13,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    hardware.xpadneo.enable = true; # Enable the xpadneo driver for Xbox One wireless controllers
+    hardware.xpadneo.enable = true; # wireless pads
     boot = {
       kernelModules = [
-        "hid_microsoft" # Xbox One Elite 2 controller driver preferred by Steam
+        "hid_microsoft" # Elite 2, preferred by Steam
       ];
     };
     # Only relevant for wireless controllers; leaves BlueZ alone otherwise.
