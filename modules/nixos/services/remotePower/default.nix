@@ -19,7 +19,7 @@ in
       group = "homeassistant";
       isNormalUser = true;
       openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEFjrl7ckZi0+SicEhO64c+hwxsJxQDlR+n5zWeKpVfZ hassio@ha.warp.r2r.sh-ssh"
+        "no-port-forwarding,no-agent-forwarding,no-X11-forwarding ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEFjrl7ckZi0+SicEhO64c+hwxsJxQDlR+n5zWeKpVfZ hassio@ha.warp.r2r.sh-ssh"
       ];
     };
 
