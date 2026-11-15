@@ -65,8 +65,6 @@
     };
   };
 
-  hardware.enableAllFirmware = true; # ?rgb?
-
   boot.kernelParams = [
     "pci=realloc" # enable dynamic pci allocation to handle 14+ usb ports
     # NVMe power saving workaround
