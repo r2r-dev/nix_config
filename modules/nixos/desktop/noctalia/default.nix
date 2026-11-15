@@ -10,6 +10,21 @@
 }:
 let
   cfg = config.my.desktop.noctalia;
+
+  # aquamarine main (evdi CPU-copy fallback, #279) + GUD USB displays
+  aquamarine = pkgs.aquamarine.overrideAttrs (old: {
+    version = "0.15.1-unstable-2026-10-30";
+    src = pkgs.fetchFromGitHub {
+      owner = "hyprwm";
+      repo = "aquamarine";
+      rev = "eac1b827c4a12dc026f21c966cde2f248fe6ee12";
+      hash = "sha256-LKHPWs7mm7/y8Y0urwmYnnGZ00YTCoF/SU/aEEwPi5I=";
+    };
+    patches = (old.patches or [ ]) ++ [
+      ./aquamarine-gud.patch
+      ./aquamarine-renderless-cpu-copy.patch
+    ];
+  });
 in
 {
   options.my.desktop.noctalia = {
@@ -17,8 +32,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.hyprland.enable = true;
-    programs.hyprland.withUWSM = true;
+    programs.hyprland = {
+      enable = true;
+      withUWSM = true;
+      package = pkgs.hyprland.override { inherit aquamarine; };
+    };
     programs.noctalia = {
       enable = true;
 

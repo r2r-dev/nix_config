@@ -1,0 +1,131 @@
+diff --git a/include/aquamarine/backend/Backend.hpp b/include/aquamarine/backend/Backend.hpp
+index bd55c7c..9e91977 100644
+--- a/include/aquamarine/backend/Backend.hpp
++++ b/include/aquamarine/backend/Backend.hpp
+@@ -37,6 +37,7 @@ namespace Aquamarine {
+         AQ_BACKEND_GPU_DRIVER_NVIDIA,  // proprietary nvidia-drm
+         AQ_BACKEND_GPU_DRIVER_NOUVEAU, // open source nouveau
+         AQ_BACKEND_GPU_DRIVER_EVDI,    // displayLink virtual driver
++        AQ_BACKEND_GPU_DRIVER_GUD,     // generic USB display (KMS over USB, no renderer)
+     };
+ 
+     enum eBackendRequestMode : uint32_t {
+diff --git a/src/backend/drm/DRM.cpp b/src/backend/drm/DRM.cpp
+index fbfaf6b..ab868a0 100644
+--- a/src/backend/drm/DRM.cpp
++++ b/src/backend/drm/DRM.cpp
+@@ -1115,6 +1115,8 @@ bool Aquamarine::CDRMBackend::registerGPU(SP<CSessionDevice> gpu_, SP<CDRMBacken
+             return AQ_BACKEND_GPU_DRIVER_NOUVEAU;
+         if (name == "evdi")
+             return AQ_BACKEND_GPU_DRIVER_EVDI;
++        if (name == "gud")
++            return AQ_BACKEND_GPU_DRIVER_GUD;
+ 
+         return AQ_BACKEND_GPU_DRIVER_UNKNOWN;
+     };
+@@ -1126,8 +1128,10 @@ bool Aquamarine::CDRMBackend::registerGPU(SP<CSessionDevice> gpu_, SP<CDRMBacken
+ 
+     auto drmVerName = drmVer && drmVer->name ? drmVer->name : "unknown";
+     driver          = driverFromName(drmVerName);
+-    if (driver == AQ_BACKEND_GPU_DRIVER_EVDI) {
+-        // DisplayLink/evdi exposes KMS without a usable EGL renderer. Keep primary so its output swapchain stays LINEAR.
++    if (driver == AQ_BACKEND_GPU_DRIVER_EVDI || driver == AQ_BACKEND_GPU_DRIVER_GUD) {
++        // DisplayLink/evdi and GUD (generic USB display) expose KMS without a render node or a usable EGL renderer:
++        // the primary renders, we import its (LINEAR) buffers or copy them into dumb buffers.
++        // Keep primary so its output swapchain stays LINEAR.
+         rendererRequired = false;
+     }
+ 
+@@ -2474,7 +2478,8 @@ bool Aquamarine::CDRMOutput::prepareAsyncCommitData(const COutputState::CSnapsho
+     } else
+         drmFB = CDRMFB::create(STATE.buffer, backend, nullptr);
+ 
+-    if (!drmFB && backend->driver == AQ_BACKEND_GPU_DRIVER_EVDI) {
++    if (!drmFB && !backend->rendererRequired) {
++        // render-less device: the CPU-copy fallback lives in the synchronous path
+         requiresSync = true;
+         return false;
+     }
+@@ -2586,7 +2591,7 @@ bool Aquamarine::CDRMOutput::commitState(bool onlyTest) {
+     }
+ 
+     if ((COMMITTED & COutputState::eOutputStateProperties::AQ_OUTPUT_STATE_BUFFER) && STATE.buffer->attachments.has<CDRMBufferUnimportable>() &&
+-        backend->driver != AQ_BACKEND_GPU_DRIVER_EVDI) {
++        backend->rendererRequired) {
+         TRACE(backend->backend->log(AQ_LOG_TRACE, "drm: Cannot commit a KMS-unimportable buffer."));
+         return false;
+     }
+@@ -2719,12 +2724,14 @@ bool Aquamarine::CDRMOutput::commitState(bool onlyTest) {
+ 
+             drmFB = CDRMFB::create(NEWAQBUF, backend, nullptr); // will return attachment if present
+         } else {
+-            const bool EVDI = backend->driver == AQ_BACKEND_GPU_DRIVER_EVDI;
++            // render-less KMS devices (evdi, gud): try a direct import of the primary's LINEAR buffer first,
++            // then fall back to a CPU copy into a dumb buffer (also once a direct commit has failed, see below)
++            const bool RENDERLESS = !backend->rendererRequired;
+ 
+-            if (!(EVDI && backend->cpuCopyFallback))
++            if (!(RENDERLESS && backend->cpuCopyFallback))
+                 drmFB = CDRMFB::create(STATE.buffer, backend, nullptr); // will return attachment if present
+ 
+-            if (!drmFB && EVDI && backend->dumbAllocator) {
++            if (!drmFB && RENDERLESS && backend->dumbAllocator) {
+                 if (!backend->cpuCopyFallback) {
+                     backend->backend->log(AQ_LOG_DEBUG,
+                                           std::format("drm: direct KMS import of primary buffer failed on {}, switching to dumb-buffer CPU copy", backend->gpuName));
+@@ -2733,7 +2740,7 @@ bool Aquamarine::CDRMOutput::commitState(bool onlyTest) {
+ 
+                 SP<CDRMRenderer> primaryRenderer = backend->primary ? backend->primary->rendererState.renderer : nullptr;
+                 if (!primaryRenderer) {
+-                    backend->backend->log(AQ_LOG_ERROR, "drm: evdi CPU copy requires a primary renderer");
++                    backend->backend->log(AQ_LOG_ERROR, "drm: CPU copy to a render-less device requires a primary renderer");
+                     return false;
+                 }
+ 
+@@ -2744,7 +2751,7 @@ bool Aquamarine::CDRMOutput::commitState(bool onlyTest) {
+                 auto blitResult = primaryRenderer->blit(STATE.buffer, NEWAQBUF, nullptr,
+                                                         (COMMITTED & COutputState::eOutputStateProperties::AQ_OUTPUT_STATE_EXPLICIT_IN_FENCE) ? STATE.explicitInFence : -1);
+                 if (!blitResult.success) {
+-                    backend->backend->log(AQ_LOG_ERROR, "drm: evdi: primary blit into dumb buffer failed");
++                    backend->backend->log(AQ_LOG_ERROR, "drm: render-less device: primary blit into dumb buffer failed");
+                     return false;
+                 }
+ 
+@@ -2858,6 +2865,17 @@ bool Aquamarine::CDRMOutput::commitState(bool onlyTest) {
+             connector->commitTainted = true;
+     }
+ 
++    // A directly imported buffer can be accepted by AddFB on a render-less device and still fail at commit:
++    // such drivers read the pixels with the CPU, which the exporter may not allow for a shared dma-buf
++    // (e.g. no vmap). Switch to the dumb-buffer copy and try once more.
++    if (!ok && !onlyTest && !backend->rendererRequired && !backend->cpuCopyFallback && backend->dumbAllocator && data.mainFB &&
++        (COMMITTED & COutputState::eOutputStateProperties::AQ_OUTPUT_STATE_BUFFER)) {
++        backend->backend->log(AQ_LOG_DEBUG, std::format("drm: commit of a directly imported buffer failed on {}, switching to dumb-buffer CPU copy", backend->gpuName));
++        backend->cpuCopyFallback   = true;
++        connector->commitTainted   = false;
++        return commitState(onlyTest);
++    }
++
+     if (onlyTest || !ok)
+         return ok;
+ 
+@@ -3113,8 +3131,8 @@ uint32_t Aquamarine::CDRMOutput::commitCapabilities() const {
+     if (!backend || !backend->commitThread || !backend->atomic)
+         return 0;
+ 
+-    // queued commits only do direct imports, the evdi CPU copy goes through commitState
+-    if (backend->cpuCopyFallback)
++    // queued commits only do direct imports; the render-less CPU copy and its fallback detection live in commitState
++    if (backend->cpuCopyFallback || !backend->rendererRequired)
+         return 0;
+ 
+     uint32_t capabilities = AQ_OUTPUT_COMMIT_CAPABILITY_QUEUED | AQ_OUTPUT_COMMIT_CAPABILITY_TIMED;
+@@ -3153,7 +3171,7 @@ Aquamarine::IOutput::SCommitSubmission Aquamarine::CDRMOutput::commitAsync(const
+     if (!STATE.buffer || !STATE.enabled || STATE.drmFormat == DRM_FORMAT_INVALID)
+         return {.error = EINVAL};
+     if (STATE.buffer->attachments.has<CDRMBufferUnimportable>())
+-        return {.error = backend->driver == AQ_BACKEND_GPU_DRIVER_EVDI ? ENOTSUP : EINVAL};
++        return {.error = !backend->rendererRequired ? ENOTSUP : EINVAL};
+     if (STATE.adaptiveSync && !(CAPABILITIES & AQ_OUTPUT_COMMIT_CAPABILITY_VRR))
+         return {.error = ENOTSUP};
+     if (STATE.presentationMode == AQ_OUTPUT_PRESENTATION_IMMEDIATE && !(CAPABILITIES & AQ_OUTPUT_COMMIT_CAPABILITY_TEARING))

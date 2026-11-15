@@ -1,0 +1,12 @@
+--- a/src/backend/drm/DRM.cpp	2026-10-30 20:52:34.044270819 +0100
++++ b/src/backend/drm/DRM.cpp	2026-10-30 20:56:32.736506891 +0100
+@@ -1128,6 +1128,9 @@
+         // the primary renders, we import its (LINEAR) buffers or copy them into dumb buffers.
+         // Keep primary so its output swapchain stays LINEAR.
+         rendererRequired = false;
++        // AQ_RENDERLESS_CPU_COPY=1 skips the direct import and always copies into dumb buffers
++        if (1)
++            cpuCopyFallback = true;
+     }
+ 
+     backend->log(AQ_LOG_DEBUG,
