@@ -10,10 +10,18 @@ in
 {
   options.my.ssh = {
     enable = lib.mkEnableOption "the OpenSSH server";
+    passwordAuth = lib.mkEnableOption "password logins (keys only otherwise)";
   };
 
   config = lib.mkIf cfg.enable {
-    services.openssh.enable = true;
+    services.openssh = {
+      enable = true;
+      settings = {
+        PasswordAuthentication = cfg.passwordAuth;
+        KbdInteractiveAuthentication = cfg.passwordAuth;
+        PermitRootLogin = "no";
+      };
+    };
     my.persist = {
       files = [
         "/etc/ssh/ssh_host_ed25519_key"
