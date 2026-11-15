@@ -11,6 +11,7 @@ in
 {
   options.my.hardware.rgb = {
     enable = lib.mkEnableOption "OpenRGB hardware lighting control";
+    openFirewall = lib.mkEnableOption "the OpenRGB SDK server port for other hosts";
   };
 
   config = lib.mkIf cfg.enable {
@@ -28,7 +29,7 @@ in
         }
       );
     };
-    networking.firewall.allowedTCPPorts = [ 6742 ];
+    networking.firewall.allowedTCPPorts = lib.optional cfg.openFirewall 6742;
     hardware.i2c.enable = true;
     environment.systemPackages = with pkgs; [
       i2c-tools # openrgb
